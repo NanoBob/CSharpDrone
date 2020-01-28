@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Drone.Api": {
+      "commandName": "Project"
+    },
+    "Remote debugger": {
+      "commandName": "Executable",
+      "executablePath": "ssh",
+      "commandLineArgs": "pi@raspberrypi \"dotnet ~/dronev2/dotnetcore3.1/Drone.Api.dll\""
+    }
+  }
+}
