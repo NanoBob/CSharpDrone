@@ -1,5 +1,6 @@
 ﻿using Drone.Core.Devices.Motors;
 using Drone.Core.Devices.Pwm;
+using Drone.Core.Sensors.Gps;
 using Drone.Core.Sensors.Orientation;
 using System;
 using System.Threading;
@@ -13,6 +14,19 @@ namespace Drone.Api
         {
             Console.WriteLine("Hello World!");
 
+
+            Task.Run(async () =>
+            {
+                GpsSensor sensor = new GpsSensor();
+                await sensor.Init();
+                
+                while (true)
+                {
+                    Console.WriteLine($"Longitude: {sensor.Longitude}, latitude: {sensor.Latitude}");
+                    await Task.Delay(500);
+                }
+            });
+
             Task.Run(async () =>
             {
                 OrientationSensor sensor = new OrientationSensor();
@@ -21,7 +35,7 @@ namespace Drone.Api
                 while (true)
                 {
                     Console.WriteLine($"Orientation: {sensor.GetOrientation()}");
-                    Thread.Sleep(500);
+                    await Task.Delay(500);
                 }
             });
 
