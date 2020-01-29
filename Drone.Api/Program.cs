@@ -17,14 +17,17 @@ namespace Drone.Api
 
             Task.Run(async () =>
             {
-                GpsSensor sensor = new GpsSensor();
-                await sensor.Init();
-                
-                while (true)
+                using (GpsSensor sensor = new GpsSensor())
                 {
-                    Console.WriteLine($"Longitude: {sensor.Longitude}, latitude: {sensor.Latitude}");
-                    await Task.Delay(500);
+                    await sensor.Init();
+                    Console.WriteLine("GPS Sensor opened");
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Console.WriteLine($"Longitude: {sensor.Longitude}, latitude: {sensor.Latitude}");
+                        await Task.Delay(1000);
+                    }
                 }
+                Console.WriteLine("GPS Sensor closed");
             });
 
             Task.Run(async () =>

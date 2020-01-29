@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Drone.Core.Sensors.Gps
 {
-    public class GpsSensor
+    public class GpsSensor: IDisposable
     {
         private readonly SerialPort serialPort;
         private readonly SerialPortDevice SerialPortDevice;
@@ -28,14 +28,23 @@ namespace Drone.Core.Sensors.Gps
             await this.SerialPortDevice.OpenAsync();
         }
 
+        ~GpsSensor()
+        {
+            this.SerialPortDevice.CloseAsync().Wait();
+        }
+
         private void HandleNmeaMessage(object sender, NmeaMessageReceivedEventArgs eventArgs)
         {
             if (eventArgs.Message is NmeaParser.Messages.Rmc rmc)
             {
                 this.Longitude = rmc.Longitude;
                 this.Latitude = rmc.Latitude;
-                Console.WriteLine($"Your current location is: {rmc.Longitude}, {rmc.Latitude}");
             }
+        }
+
+        public void Dispose()
+        {
+            this.SerialPortDevice.CloseAsync().Wait();
         }
     }
 }
