@@ -14,6 +14,9 @@ namespace Drone.Core.Devices.Motors
         private readonly PwmController pwmController;
         private readonly byte id;
 
+        private double throttleMin;
+        private double throttleMax;
+
         public double Speed { get; private set; }
         public bool IsRunning { get; private set; }
 
@@ -21,6 +24,26 @@ namespace Drone.Core.Devices.Motors
         {
             this.pwmController = pwmController;
             this.id = id;
+            Console.WriteLine($"Min: {servoMin}");
+            Console.WriteLine($"Max: {servoMax}");
+        }
+
+        public async Task Arm(double min, double max)
+        {
+            throttleMin = servoMin;
+            throttleMax = servoMax;
+
+            this.Stop();
+            await Task.Delay(1000);
+
+            this.Run(max);
+            await Task.Delay(1000);
+
+            this.Run(min);
+            await Task.Delay(1000);
+
+            throttleMin = servoMin + min * (servoMax - servoMin);
+            throttleMax = servoMin + max * (servoMax - servoMin);
         }
 
         public void Run(double speed)
@@ -29,22 +52,13 @@ namespace Drone.Core.Devices.Motors
             this.IsRunning = speed > 0;
             if (speed <= 0)
             {
+                Console.WriteLine(servoMin);
                 this.pwmController.SetPulseParameters(this.id, servoMin);
             } else
             {
-                Console.WriteLine(servoMin + speed * (servoMax - servoMin));
-                this.pwmController.SetPulseParameters(this.id, servoMin + speed * (servoMax - servoMin));
+                Console.WriteLine(throttleMin + speed * (throttleMax - throttleMin));
+                this.pwmController.SetPulseParameters(this.id, throttleMin + speed * (throttleMax - throttleMin));
             }
-        }
-
-        public async Task Arm(double min, double max)
-        {
-            this.Stop();
-            await Task.Delay(4000);
-            this.Run(max);
-            await Task.Delay(4000);
-            this.Run(min);
-            await Task.Delay(4000);
         }
 
         public void Stop()

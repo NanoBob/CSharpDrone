@@ -1,4 +1,5 @@
-﻿using Drone.Core.Devices.Motors;
+﻿using Drone.Core.Controllers;
+using Drone.Core.Devices.Motors;
 using Drone.Core.Devices.Pwm;
 using Drone.Core.Sensors.Gps;
 using Drone.Core.Sensors.Orientation;
@@ -15,37 +16,46 @@ namespace Drone.Api
             Console.WriteLine("Hello World!");
 
 
-            Task.Run(async () =>
-            {
-                using (GpsSensor sensor = new GpsSensor())
-                {
-                    await sensor.Init();
-                    Console.WriteLine("GPS Sensor opened");
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Console.WriteLine($"Longitude: {sensor.Longitude}, latitude: {sensor.Latitude}");
-                        await Task.Delay(1000);
-                    }
-                }
-                Console.WriteLine("GPS Sensor closed");
-            });
+            //Task.Run(async () =>
+            //{
+            //    using (GpsSensor sensor = new GpsSensor())
+            //    {
+            //        await sensor.Init();
+            //        Console.WriteLine("GPS Sensor opened");
+            //        for (int i = 0; i < 10; i++)
+            //        {
+            //            Console.WriteLine($"Longitude: {sensor.Longitude}, latitude: {sensor.Latitude}");
+            //            await Task.Delay(1000);
+            //        }
+            //    }
+            //    Console.WriteLine("GPS Sensor closed");
+            //});
 
-            Task.Run(async () =>
-            {
-                OrientationSensor sensor = new OrientationSensor();
-                await sensor.Init();
+            //Task.Run(async () =>
+            //{
+            //    OrientationSensor sensor = new OrientationSensor();
+            //    await sensor.Init();
 
-                while (true)
-                {
-                    Console.WriteLine($"Orientation: {sensor.GetOrientation()}");
-                    await Task.Delay(500);
-                }
-            });
+            //    while (true)
+            //    {
+            //        Console.WriteLine($"Orientation: {sensor.GetOrientation()}");
+            //        await Task.Delay(500);
+            //    }
+            //});
 
-            Task.Run(async () =>
-            {
-                PwmController pwmController = new PwmController();
-                pwmController.Init();
+            //Task.Run(async () =>
+            //{
+            //    MotorController motorController = new MotorController();
+            //    await motorController.Init();
+
+            //    motorController.Throttle = 0.1f;
+            //    await Task.Delay(150);
+            //    motorController.Throttle = 0.0f;
+            //});
+
+            Task.Run(async () => {
+                PwmController pwmController = new PwmController(); 
+                pwmController.Init(); 
                 await Task.Delay(1000);
 
                 Motor[] motors = new Motor[4];
@@ -57,21 +67,28 @@ namespace Drone.Api
                 Task[] tasks = new Task[motors.Length];
                 for (int i = 0; i < motors.Length; i++)
                 {
-                    tasks[i] = motors[i].Arm(0, 1);
+                    tasks[i] = motors[i].Arm(0.1, 1);
                 }
                 await Task.WhenAll(tasks);
 
-                foreach(var motor in motors)
+                foreach (var motor in motors)
                 {
-                    motor.Run(0.05);
+                    motor.Run(0.1);
                 }
                 await Task.Delay(1000);
+
                 foreach (var motor in motors)
                 {
                     motor.Run(0.0);
                 }
+                await Task.Delay(1000);
 
+                foreach (var motor in motors)
+                {
+                    motor.Run(0.0);
+                }
             });
+
 
             Thread.Sleep(-1);
         }
