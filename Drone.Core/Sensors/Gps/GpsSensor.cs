@@ -1,4 +1,5 @@
-﻿using NmeaParser;
+﻿using Drone.Core.Structs;
+using NmeaParser;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -39,6 +40,8 @@ namespace Drone.Core.Sensors.Gps
             {
                 this.Longitude = rmc.Longitude;
                 this.Latitude = rmc.Latitude;
+
+                this.OnPositionDetected?.Invoke(new Position() { latitude = (float)rmc.Latitude, longitude = (float)rmc.Longitude });
             }
         }
 
@@ -46,5 +49,7 @@ namespace Drone.Core.Sensors.Gps
         {
             this.SerialPortDevice.CloseAsync().Wait();
         }
+
+        public event Action<Position> OnPositionDetected;
     }
 }

@@ -34,7 +34,7 @@ namespace Drone.Core.Devices.Motors
             throttleMax = servoMax;
 
             this.Stop();
-            await Task.Delay(1000);
+            await Task.Delay(4000);
 
             this.Run(max);
             await Task.Delay(1000);
@@ -52,11 +52,9 @@ namespace Drone.Core.Devices.Motors
             this.IsRunning = speed > 0;
             if (speed <= 0)
             {
-                Console.WriteLine(servoMin);
-                this.pwmController.SetPulseParameters(this.id, servoMin);
+                this.pwmController.SetPulseParameters(this.id, throttleMin);
             } else
             {
-                Console.WriteLine(throttleMin + speed * (throttleMax - throttleMin));
                 this.pwmController.SetPulseParameters(this.id, throttleMin + speed * (throttleMax - throttleMin));
             }
         }

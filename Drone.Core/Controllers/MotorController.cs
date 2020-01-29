@@ -62,8 +62,8 @@ namespace Drone.Core.Controllers
             
             FrontLeft = new Motor(this.pwmController, 0);
             FrontRight = new Motor(this.pwmController, 4);
-            RearLeft = new Motor(this.pwmController, 8);
-            RearRight = new Motor(this.pwmController, 12);
+            RearRight = new Motor(this.pwmController, 8);
+            RearLeft = new Motor(this.pwmController, 12);
 
             await Arm();
 
@@ -71,7 +71,7 @@ namespace Drone.Core.Controllers
 
         }
 
-        public async Task Arm(double min = 0, double max = 1)
+        public async Task Arm(double min = 0.1, double max = 1)
         {
             await Task.WhenAll(new Task[] 
             {
@@ -108,7 +108,7 @@ namespace Drone.Core.Controllers
 
         private double LimitThrust(double value, double limit) => Math.Clamp(value, -limit, limit);
 
-        private void UpdateMotors()
+        public void UpdateMotors()
         {
             if (!IsEnabled)
             {
@@ -119,6 +119,20 @@ namespace Drone.Core.Controllers
             FrontRight.Run(throttle + pitch - roll - yaw);
             RearLeft.Run(throttle - pitch + roll - yaw);
             RearRight.Run(throttle - pitch - roll + yaw);
+        }
+
+        public async Task RunTest(float target)
+        {
+            for (float i = 0; i < target; i += (target * .0004f))
+            {
+                this.Throttle = i;
+                await Task.Delay(10);
+            }
+            for (float i = target; i >= 0; i -= (target * .0004f))
+            {
+                this.Throttle = i;
+                await Task.Delay(10);
+            }
         }
     }
 }
