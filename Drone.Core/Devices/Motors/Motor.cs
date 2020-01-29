@@ -44,6 +44,7 @@ namespace Drone.Core.Devices.Motors
 
             throttleMin = servoMin + min * (servoMax - servoMin);
             throttleMax = servoMin + max * (servoMax - servoMin);
+            this.Speed = 0;
         }
 
         public void Run(double speed)

@@ -45,7 +45,7 @@ namespace Drone.Core.Controllers
             get => throttle;
             set
             { 
-                throttle = LimitThrust(value, 7);
+                throttle = LimitThrust(value, 0.7);
                 UpdateMotors();
             }
         }
@@ -91,6 +91,7 @@ namespace Drone.Core.Controllers
 
         public void Disable()
         {
+            IsEnabled = false;
             FrontLeft.Run(0);
             FrontRight.Run(0);
             RearLeft.Run(0);
@@ -123,6 +124,16 @@ namespace Drone.Core.Controllers
 
         public async Task RunTest(float target)
         {
+            Console.WriteLine(target);
+            if (target < 1)
+            {
+                await PlaySong(song);
+                return;
+            }
+            if (target > 100)
+            {
+                return;
+            }
             for (float i = 0; i < target; i += (target * .0004f))
             {
                 this.Throttle = i;
@@ -133,6 +144,46 @@ namespace Drone.Core.Controllers
                 this.Throttle = i;
                 await Task.Delay(10);
             }
+        }
+
+        private readonly Note[] song = new Note[]
+        {
+            new Note(0.07f, 750),
+            new Note(0.00f, 50),
+            new Note(0.07f, 300),
+            new Note(0.11f, 500),
+            new Note(0.08f, 500),
+            new Note(0.06f, 500),
+            new Note(0.04f, 750),
+            new Note(0.03f, 500),
+        };
+
+        
+        private async Task PlaySong(Note[] notes)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                foreach (var note in notes)
+                {
+                    this.Throttle = note.power * 3;
+                    await Task.Delay(note.duration);
+                    Console.WriteLine(note.power);
+                }
+                await Task.Delay(200);
+            }
+            this.Throttle = 0;
+        }
+    }
+
+    struct Note
+    {
+        public float power;
+        public int duration;
+
+        public Note(float power, int duration)
+        {
+            this.power = power;
+            this.duration = duration;
         }
     }
 }
