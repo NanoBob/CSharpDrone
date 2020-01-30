@@ -9,7 +9,7 @@ namespace Drone.Core.Controllers
 {
     public class GpsController
     {
-        private GpsSensor gpsSensor;
+        private IGpsSensor gpsSensor;
 
         public Position Position { get; private set; } = new Position() { latitude = 0, longitude = 0 };
 

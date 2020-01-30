@@ -10,7 +10,7 @@ namespace Drone.Core.Controllers
 {
     public class OrientationController
     {
-        private OrientationSensor orientationSensor;
+        private IOrientationSensor orientationSensor;
         private bool running;
         private readonly MotorController motorController;
 
@@ -35,9 +35,9 @@ namespace Drone.Core.Controllers
             }
         }
 
-        public OrientationController(MotorController motorController)
+        public OrientationController(MotorController motorController, IOrientationSensor orientationSensor)
         {
-            this.orientationSensor = new OrientationSensor();
+            this.orientationSensor = orientationSensor;
             this.motorController = motorController;
 
             this.orientationOffsetHandlers = new Dictionary<Axis, OrientationOffsetHandler>()
@@ -46,6 +46,11 @@ namespace Drone.Core.Controllers
                 [Axis.Pitch] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
                 [Axis.Roll] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
             };
+        }
+
+        public OrientationController(MotorController motorController): this(motorController, new OrientationSensor())
+        {
+
         }
 
         public async Task Init()

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Drone.Core.Sensors.Gps
 {
-    public class GpsSensor: IDisposable
+    public class GpsSensor: IGpsSensor, IDisposable
     {
         private readonly SerialPort serialPort;
         private readonly SerialPortDevice SerialPortDevice;

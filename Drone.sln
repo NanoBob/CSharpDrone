@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drone.Api", "Drone.Api\Drone.Api.csproj", "{75D7F6D7-EEF1-498C-A3BE-DCBFF88D4333}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drone.Api", "Drone.Api\Drone.Api.csproj", "{75D7F6D7-EEF1-498C-A3BE-DCBFF88D4333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drone.Core", "Drone.Core\Drone.Core.csproj", "{360DBF56-FD00-4C50-ABAA-3ED576C10C71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drone.Core", "Drone.Core\Drone.Core.csproj", "{360DBF56-FD00-4C50-ABAA-3ED576C10C71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drone.Simulator", "Drone.Simulator\Drone.Simulator.csproj", "{BE331B55-E1EE-430B-9E96-762722EE1BF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{360DBF56-FD00-4C50-ABAA-3ED576C10C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{360DBF56-FD00-4C50-ABAA-3ED576C10C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{360DBF56-FD00-4C50-ABAA-3ED576C10C71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE331B55-E1EE-430B-9E96-762722EE1BF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE331B55-E1EE-430B-9E96-762722EE1BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE331B55-E1EE-430B-9E96-762722EE1BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE331B55-E1EE-430B-9E96-762722EE1BF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

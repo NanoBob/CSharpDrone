@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Drone.Core.Sensors.Orientation
 {
-    public class OrientationSensor
+    public class OrientationSensor: IOrientationSensor
 	{
 		private readonly I2cDevice i2cDevice;
 
