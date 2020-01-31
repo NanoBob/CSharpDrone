@@ -1,4 +1,5 @@
 ﻿using Drone.Core.Controllers;
+using Drone.Core.Devices.Pwm;
 using Drone.Core.Structs;
 using System;
 using System.Collections.Generic;
@@ -44,13 +45,15 @@ namespace Drone.Core
             set => throw new NotImplementedException();
         }
 
+        private readonly PwmController pwmController;
         private readonly MotorController motorController;
         private readonly OrientationController orientationController;
         private readonly GpsController gpsController;
 
         public Drone()
         {
-            this.motorController = new MotorController();
+            this.pwmController = new PwmController();
+            this.motorController = new MotorController(pwmController);
             this.orientationController = new OrientationController(this.motorController);
             this.gpsController = new GpsController();
         }

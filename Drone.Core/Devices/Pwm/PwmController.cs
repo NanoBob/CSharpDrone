@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Drone.Core.Devices.Pwm
 {
-    public class PwmController
+    public class PwmController: IPwmController
     {
         private readonly I2cDevice i2cDevice;
 

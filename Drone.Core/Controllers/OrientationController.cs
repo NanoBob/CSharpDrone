@@ -77,12 +77,17 @@ namespace Drone.Core.Controllers
         {
             while (true)
             {
-                this.Orientation = this.orientationSensor.GetOrientation();
-                if (Enabled)
-                {
-                    HandleOrientationOffset(this.Orientation - this.Target);
-                }
+                RunOrientationAssist();
                 await Task.Delay(10);
+            }
+        }
+
+        public void RunOrientationAssist()
+        {
+            this.Orientation = this.orientationSensor.GetOrientation();
+            if (Enabled)
+            {
+                HandleOrientationOffset(this.Orientation - this.Target);
             }
         }
 

@@ -25,8 +25,6 @@ namespace Drone.Core
             {
                 try
                 {
-
-
                     AddActions();
 
                     await drone.Init();

@@ -9,7 +9,7 @@ namespace Drone.Core.Controllers
 {
     public class MotorController
     {
-        private readonly PwmController pwmController;
+        private readonly IPwmController pwmController;
 
         public Motor FrontLeft { get; private set; }
         public Motor FrontRight { get; private set; }
@@ -50,9 +50,9 @@ namespace Drone.Core.Controllers
             }
         }
 
-        public MotorController()
+        public MotorController(IPwmController pwmController)
         {
-            this.pwmController = new PwmController();
+            this.pwmController = pwmController;
         }
 
         public async Task Init()

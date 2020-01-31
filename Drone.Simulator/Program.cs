@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Numerics;
+using System.Threading.Tasks;
 
 namespace Drone.Simulator
 {
@@ -6,7 +8,12 @@ namespace Drone.Simulator
     {
         static void Main(string[] args)
         {
-            new DroneSimulator();
+            Task.Run(async () =>
+            {
+                var simulator = new DroneSimulator();
+                await simulator.Init();
+                simulator.Start(Vector3.Zero, new Vector3(0, 10, 0));
+            }).Wait();
         }
     }
 }

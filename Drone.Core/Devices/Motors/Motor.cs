@@ -11,7 +11,7 @@ namespace Drone.Core.Devices.Motors
         private const int servoMax = (int)(4000 * 0.4);
         private const int servoMin = (int)(4000 * 0.4 * 0.35);
 
-        private readonly PwmController pwmController;
+        private readonly IPwmController pwmController;
         private readonly byte id;
 
         private double throttleMin;
@@ -20,7 +20,7 @@ namespace Drone.Core.Devices.Motors
         public double Speed { get; private set; }
         public bool IsRunning { get; private set; }
 
-        public Motor(PwmController pwmController, byte id)
+        public Motor(IPwmController pwmController, byte id)
         {
             this.pwmController = pwmController;
             this.id = id;
