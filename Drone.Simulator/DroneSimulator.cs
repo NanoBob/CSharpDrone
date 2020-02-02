@@ -1,7 +1,11 @@
 ﻿using Drone.Core.Controllers;
+using Drone.Core.Enums;
+using Drone.Core.Interfaces;
 using Drone.Core.Sensors.Orientation;
 using Drone.Simulator.Devices;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -21,7 +25,12 @@ namespace Drone.Simulator
             this.pwmController = new SimulationPwmController();
             this.orientationSensor = new SimulationOrientationSensor();
             this.motorController = new MotorController(this.pwmController);
-            this.orientationController = new OrientationController(this.motorController, this.orientationSensor);
+            this.orientationController = new OrientationController(this.motorController, this.orientationSensor, new Dictionary<Axis, IOrientationOffsetHandler>()
+            {
+                [Axis.Yaw] = new QLearningOrientationOffsetHandler(),
+                [Axis.Pitch] = new QLearningOrientationOffsetHandler(),
+                [Axis.Roll] = new QLearningOrientationOffsetHandler(),
+            });
         }
 
         public async Task Init()
@@ -44,6 +53,14 @@ namespace Drone.Simulator
                 SimulateThrustApplication();
                 this.orientationController.RunOrientationAssist();
                 Console.WriteLine(this.orientationSensor.Orientation);
+            }
+
+            foreach(var offsetHandler in this.orientationController.orientationOffsetHandlers)
+            {
+                if (offsetHandler.Value is QLearningOrientationOffsetHandler qLearningOrientationOffsetHandler)
+                {
+                    File.WriteAllText($"{offsetHandler.Key.ToString()}.json", qLearningOrientationOffsetHandler.SaveToJson());
+                }
             }
             return this.orientationSensor.Orientation;
         }

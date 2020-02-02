@@ -1,4 +1,5 @@
 ﻿using Drone.Core.Enums;
+using Drone.Core.Interfaces;
 using Drone.Core.Sensors.Orientation;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Drone.Core.Controllers
         private bool running;
         private readonly MotorController motorController;
 
-        public Dictionary<Axis, OrientationOffsetHandler> orientationOffsetHandlers;
+        public Dictionary<Axis, IOrientationOffsetHandler> orientationOffsetHandlers;
 
         public Vector3 Orientation { get; private set; }
         public Vector3 Target { get; set; } = Vector3.Zero;
@@ -35,17 +36,26 @@ namespace Drone.Core.Controllers
             }
         }
 
-        public OrientationController(MotorController motorController, IOrientationSensor orientationSensor)
+        public OrientationController(MotorController motorController, IOrientationSensor orientationSensor, Dictionary<Axis, IOrientationOffsetHandler> offsetHandlers)
         {
             this.orientationSensor = orientationSensor;
             this.motorController = motorController;
 
-            this.orientationOffsetHandlers = new Dictionary<Axis, OrientationOffsetHandler>()
-            {
-                //[Axis.Yaw] = new OrientationOffsetHandler(1.0f / 90.0f, 0.1f),
-                [Axis.Pitch] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
-                [Axis.Roll] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
-            };
+            this.orientationOffsetHandlers = offsetHandlers;
+        }
+
+        public OrientationController(MotorController motorController, IOrientationSensor orientationSensor): 
+            this(
+                motorController, 
+                orientationSensor, 
+                new Dictionary<Axis, IOrientationOffsetHandler>()
+                {
+                    [Axis.Yaw] = new OrientationOffsetHandler(0.0f, 0.1f),
+                    [Axis.Pitch] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
+                    [Axis.Roll] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
+                })
+        {
+
         }
 
         public OrientationController(MotorController motorController): this(motorController, new OrientationSensor())
@@ -87,21 +97,24 @@ namespace Drone.Core.Controllers
             this.Orientation = this.orientationSensor.GetOrientation();
             if (Enabled)
             {
+                Console.WriteLine($"Orient: {Orientation}");
+                Console.WriteLine($"Target: {Target}");
                 HandleOrientationOffset(this.Orientation - this.Target);
             }
         }
 
-        private void HandleOrientationOffset(Vector3 orientation)
+        private void HandleOrientationOffset(Vector3 offset)
         {
-            this.motorController.Yaw = GetThrottleForOffset(Axis.Yaw, orientation.X);
-            this.motorController.Pitch = GetThrottleForOffset(Axis.Pitch, orientation.Y);
-            this.motorController.Roll = GetThrottleForOffset(Axis.Roll, orientation.Z);
+            Console.WriteLine($"Offset: {offset}");
+            this.motorController.Yaw = GetThrottleForOffset(Axis.Yaw, offset.X);
+            this.motorController.Pitch = GetThrottleForOffset(Axis.Pitch, offset.Y);
+            this.motorController.Roll = GetThrottleForOffset(Axis.Roll, offset.Z);
             this.motorController.UpdateMotors();
         }
 
         private float GetThrottleForOffset(Axis axis, float offset)
         {
-            if (this.orientationOffsetHandlers.TryGetValue(axis, out OrientationOffsetHandler orientationOffsetHandler))
+            if (this.orientationOffsetHandlers.TryGetValue(axis, out IOrientationOffsetHandler orientationOffsetHandler))
             {
                 return orientationOffsetHandler.HandleOffset(offset);
             }

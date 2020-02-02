@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Drone.Core.Interfaces
 {
-    interface IOrientationOffsetHandler
+    public interface IOrientationOffsetHandler
     {
         float HandleOffset(float offset);
     }
