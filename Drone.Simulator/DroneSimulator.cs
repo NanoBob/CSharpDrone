@@ -52,7 +52,7 @@ namespace Drone.Simulator
             {
                 SimulateThrustApplication();
                 this.orientationController.RunOrientationAssist();
-                Console.WriteLine(this.orientationSensor.Orientation);
+                //Console.WriteLine(this.orientationSensor.Orientation);
             }
 
             foreach(var offsetHandler in this.orientationController.orientationOffsetHandlers)
@@ -88,7 +88,16 @@ namespace Drone.Simulator
             Vector3 currentOrientation = this.orientationSensor.Orientation;
             Vector3 offset = new Vector3(- (float)yaw, - (float)pitch, - (float)roll);
             Vector3 newOrientation = currentOrientation + (angleOffsetMultiplier * offset);
-            this.orientationSensor.Orientation = newOrientation;
+            this.orientationSensor.Orientation = SanitizeOriention(newOrientation);
+        }
+
+        private Vector3 SanitizeOriention(Vector3 orientation)
+        {
+            return new Vector3(
+                orientation.X > 180 ? orientation.X - 360 : orientation.X < -180 ? orientation.X + 360 : orientation.X,
+                orientation.Y > 180 ? orientation.Y - 360 : orientation.Y < -180 ? orientation.Y + 360 : orientation.Y,
+                orientation.Z > 180 ? orientation.Z - 360 : orientation.Z < -180 ? orientation.Z + 360 : orientation.Z
+            );
         }
     }
 }

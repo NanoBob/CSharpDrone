@@ -3,6 +3,7 @@ using Drone.Core.Interfaces;
 using Drone.Core.Sensors.Orientation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -94,18 +95,18 @@ namespace Drone.Core.Controllers
 
         public void RunOrientationAssist()
         {
-            this.Orientation = this.orientationSensor.GetOrientation();
+            this.Orientation = SanitizeOriention(this.orientationSensor.GetOrientation());
             if (Enabled)
             {
-                Console.WriteLine($"Orient: {Orientation}");
-                Console.WriteLine($"Target: {Target}");
+                Debug.WriteLine($"Orient: {Orientation}");
+                Debug.WriteLine($"Target: {Target}");
                 HandleOrientationOffset(this.Orientation - this.Target);
             }
         }
 
         private void HandleOrientationOffset(Vector3 offset)
         {
-            Console.WriteLine($"Offset: {offset}");
+            Debug.WriteLine($"Offset: {offset}");
             this.motorController.Yaw = GetThrottleForOffset(Axis.Yaw, offset.X);
             this.motorController.Pitch = GetThrottleForOffset(Axis.Pitch, offset.Y);
             this.motorController.Roll = GetThrottleForOffset(Axis.Roll, offset.Z);
@@ -119,6 +120,15 @@ namespace Drone.Core.Controllers
                 return orientationOffsetHandler.HandleOffset(offset);
             }
             return 0;
+        }
+
+        private Vector3 SanitizeOriention(Vector3 orientation)
+        {
+            return new Vector3(
+                orientation.X > 180 ? orientation.X - 360 : orientation.X < -180 ? orientation.X + 360 : orientation.X,
+                orientation.Y > 180 ? orientation.Y - 360 : orientation.Y < -180 ? orientation.Y + 360 : orientation.Y,
+                orientation.Z > 180 ? orientation.Z - 360 : orientation.Z < -180 ? orientation.Z + 360 : orientation.Z
+            );
         }
     }
 }

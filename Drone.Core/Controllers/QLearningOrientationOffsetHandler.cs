@@ -2,6 +2,7 @@
 using Drone.Core.QLearning;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Drone.Core.Controllers
@@ -27,11 +28,12 @@ namespace Drone.Core.Controllers
             {
                 var change = this.previousOffset - offset;
                 var overshoot = (this.previousOffset > 0 && offset < 0) || (this.previousOffset < 0 && offset > 0) ? MathF.Abs(offset) : 0;
-                var result = 180 + (MathF.Abs(change) - (overshoot * 1.5f)) * 100;
+                var result = 180 + (MathF.Abs(change) - (overshoot * 1.5f)) * 1000;
                 this.qTable.StoreActionResult(this.previousOffset, this.previousAction, result);
             }
 
             var action = this.qTable.GetAction(offset);
+            Debug.WriteLine($"Performing {action}");
             this.previousOffset = offset;
             this.previousAction = action;
 

@@ -14,7 +14,7 @@ namespace Drone.Core.QLearning
         private readonly float minThrottle;
         private readonly float maxThrottle;
         private readonly float throttleIncrement;
-        private Dictionary<float, QTableRow> tableRows;
+        private Dictionary<int, QTableRow> tableRows;
 
         public QTable(float minOffset, float maxOffset, float offsetIncrements, float minThrottle, float maxThrottle, float throttleIncrement)
         {
@@ -25,34 +25,35 @@ namespace Drone.Core.QLearning
             this.maxThrottle = maxThrottle;
             this.throttleIncrement = throttleIncrement;
 
-            this.tableRows = new Dictionary<float, QTableRow>();
+            this.tableRows = new Dictionary<int, QTableRow>();
 
             InitializeTable();
         }
 
         public void LoadJson(string json)
         {
-            this.tableRows = JsonConvert.DeserializeObject<Dictionary<float, QTableRow>>(json);
+            this.tableRows = JsonConvert.DeserializeObject<Dictionary<int, QTableRow>>(json);
         }
 
         public string SaveToJson()
         {
-            return JsonConvert.SerializeObject(this.tableRows);
+            return JsonConvert.SerializeObject(this.tableRows, Formatting.Indented);
         }
 
         public float GetAction(float offset)
         {
-            if (!this.tableRows.ContainsKey(offset))
+            int index = GetIndexForOffset(offset, offsetIncrements);
+            if (!this.tableRows.ContainsKey(index))
             {
                 CreateQTableRow(offset);
             }
-            return this.tableRows[RoundToNearestIncrement(offset, offsetIncrements)].GetAction();
+            return this.tableRows[GetIndexForOffset(index, offsetIncrements)].GetAction();
         }
 
         public void StoreActionResult(float offset, float action, float result)
         {
-            var roundedOffset = RoundToNearestIncrement(offset, offsetIncrements);
-            var roundedAction = RoundToNearestIncrement(action, throttleIncrement);
+            var roundedOffset = GetIndexForOffset(offset, offsetIncrements);
+            var roundedAction = GetIndexForOffset(action, throttleIncrement);
             Debug.WriteLine($"Storing {result} as result for action {roundedAction} on offset {roundedOffset}");
             if (this.tableRows.ContainsKey(roundedOffset))
             {
@@ -74,13 +75,13 @@ namespace Drone.Core.QLearning
         private QTableRow CreateQTableRow(float offset)
         {
             QTableRow row = new QTableRow(minThrottle, maxThrottle, throttleIncrement);
-            this.tableRows[RoundToNearestIncrement(offset, offsetIncrements)] = row;
+            this.tableRows[GetIndexForOffset(offset, offsetIncrements)] = row;
             return row;
         }
 
-        private float RoundToNearestIncrement(float value, float increment)
+        private int GetIndexForOffset(float value, float increment)
         {
-            return MathF.Floor(value / increment) * increment;
+            return (int)MathF.Round(value / increment);
         }
     }
 }

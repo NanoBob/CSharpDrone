@@ -12,7 +12,7 @@ namespace Drone.Core.QLearning
         private readonly float maxThrottle;
         private readonly float throttleIncrement;
         private readonly Func<float, float> defaultValueConstructor;
-        public Dictionary<float, float> tableColumns;
+        public Dictionary<int, float> tableColumns;
         private readonly Random randomNumberGenerator;
 
 
@@ -23,7 +23,7 @@ namespace Drone.Core.QLearning
             this.throttleIncrement = throttleIncrement;
             this.defaultValueConstructor = defaultValueConstructor;
 
-            this.tableColumns = new Dictionary<float, float>();
+            this.tableColumns = new Dictionary<int, float>();
             this.randomNumberGenerator = new Random();
 
             InitializeRow();
@@ -44,16 +44,16 @@ namespace Drone.Core.QLearning
             {
                 if (current >= selected)
                 {
-                    return keyValuePair.Key;
+                    return keyValuePair.Key * throttleIncrement;
                 }
                 current += keyValuePair.Value;
             }
             return 0;
         }
 
-        public void StoreActionResult(float action, float result)
+        public void StoreActionResult(int action, float result)
         {
-            Console.WriteLine($"Storing action result {result} for action {action}");
+            Debug.WriteLine($"Storing action result {result} for action {action}");
             this.tableColumns[action] = result;
         }
 
@@ -61,8 +61,13 @@ namespace Drone.Core.QLearning
         {
             for (float i = minThrottle; i < maxThrottle; i += throttleIncrement)
             {
-                this.tableColumns[i] = defaultValueConstructor(i);
+                this.tableColumns[GetIndexForOffset(i, throttleIncrement)] = defaultValueConstructor(i);
             }
+        }
+
+        private int GetIndexForOffset(float value, float increment)
+        {
+            return (int)MathF.Round(value / increment);
         }
     }
 }
