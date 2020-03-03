@@ -15,9 +15,12 @@ namespace Drone.Core.Controllers
         private float previousOffset;
         private float previousAction;
 
-        public QLearningOrientationOffsetHandler()
+        public QLearningOrientationOffsetHandler(
+            float minOffset = -180, float maxOffset = 180, float offsetIncrements = 1, 
+            float minThrottle = -0.3f, float maxThrottle = 0.3f, float throttleIncrement = 0.01f
+        )
         {
-            this.qTable = new QTable(-180, 180, 1, -0.3f, 0.3f, 0.01f);
+            this.qTable = new QTable(minOffset, maxOffset, offsetIncrements, minThrottle, maxThrottle, throttleIncrement);
 
             this.isFirst = true;
         }
@@ -26,9 +29,10 @@ namespace Drone.Core.Controllers
         {
             if (!this.isFirst)
             {
-                var change = this.previousOffset - offset;
+                var change = offset - this.previousOffset;
                 var overshoot = (this.previousOffset > 0 && offset < 0) || (this.previousOffset < 0 && offset > 0) ? MathF.Abs(offset) : 0;
-                var result = 180 + (MathF.Abs(change) - (overshoot * 1.5f)) * 1000;
+                var wrongWay = MathF.Abs(offset) > MathF.Abs(this.previousOffset);
+                var result = 180 + ((MathF.Abs(change) * (wrongWay ? -1 : 1)) - (overshoot * 1.5f)) * 10000;
                 this.qTable.StoreActionResult(this.previousOffset, this.previousAction, result);
             }
 
