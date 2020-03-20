@@ -76,8 +76,8 @@ namespace Drone.Core.Sensors.Orientation
 			var bytes = this.i2cDevice.ReadFromAddress((byte)OrientationSensorRegister.BNO055_EULER_H_LSB_ADDR, 6);
 
 			short yaw = BitConverter.ToInt16(bytes, 0);
-			short pitch = BitConverter.ToInt16(bytes, 2);
-			short roll = BitConverter.ToInt16(bytes, 4);
+			short roll = BitConverter.ToInt16(bytes, 2);
+			short pitch = BitConverter.ToInt16(bytes, 4);
 
 			return new Vector3(yaw / 16.0f, pitch / 16.0f, roll / 16.0f);
 		}
