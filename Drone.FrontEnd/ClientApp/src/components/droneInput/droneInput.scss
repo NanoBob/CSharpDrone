@@ -1,0 +1,27 @@
+@import "../../scss/variables.scss";
+
+.input-wrapper {
+    border: 1px solid $accent;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    margin-top: 2px;
+
+    .input-label {
+        padding: 5px;
+        width: 25%;
+        min-width: 175px;
+
+        border-right: 1px solid $accent;
+    }
+
+    input {
+        background-color: transparent;
+        border: none;
+        outline: none;
+
+        color: $accent;
+        padding: 5px;
+        width: 75%;
+    }
+}

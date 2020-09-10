@@ -1,0 +1,16 @@
+@import "../../scss/variables.scss";
+
+.drone-button {
+    padding: 5px 15px 5px 15px;
+    display: block;
+    background-color: transparent;
+    color: $accent;
+    outline: none;
+    border: 1px solid $accent;
+    font-size: 15px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $accentBackground;
+    }
+}

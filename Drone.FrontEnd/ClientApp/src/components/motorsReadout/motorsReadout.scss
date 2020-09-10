@@ -1,0 +1,27 @@
+@import "../../scss/variables";
+
+.motors-readout {
+    display: flex;
+    justify-content: space-between;
+
+    .motor-readout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        width: 100%;
+
+        border-left: 1px solid $accentDull;
+        border-right: 1px solid $accentDull;
+
+        .motor-value {
+            font-size: 30px;
+        }
+
+        .motor-label {
+            font-size: 15px;
+            padding: 5px;
+            padding-bottom: 10px;
+        }
+    }
+}

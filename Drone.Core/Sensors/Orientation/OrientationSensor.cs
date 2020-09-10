@@ -13,8 +13,8 @@ namespace Drone.Core.Sensors.Orientation
 	{
 		private readonly I2cDevice i2cDevice;
 
-		private const int BNO055_ADDRESS_A = 0x28;
-		private const int BNO055_ADDRESS_B = 0x29;
+		//private const int BNO055_ADDRESS_A = 0x28;
+		//private const int BNO055_ADDRESS_B = 0x29;
 		private const int BNO055_ID = 0xA0;
 
 		public OrientationSensor(int busId = 1, int address = 0x28)
@@ -42,9 +42,9 @@ namespace Drone.Core.Sensors.Orientation
 			await Task.Delay(50);
 
 			value = this.i2cDevice.ReadFromAddress((int)OrientationSensorRegister.BNO055_SYS_TRIGGER_ADDR);
-			// Console.WriteLine("Set sys trigger to ");
-			// Console.WriteLine(value);
-			await Task.Delay(1000);
+            Console.WriteLine("Set sys trigger to ");
+            Console.WriteLine(value);
+            await Task.Delay(1000);
 
 			this.i2cDevice.WriteToAddress((int)OrientationSensorRegister.BNO055_PWR_MODE_ADDR, (int)OrientationSensorPowerMode.POWER_MODE_NORMAL);
 			value = this.i2cDevice.ReadFromAddress((int)OrientationSensorRegister.BNO055_PWR_MODE_ADDR);
@@ -79,7 +79,7 @@ namespace Drone.Core.Sensors.Orientation
 			short roll = BitConverter.ToInt16(bytes, 2);
 			short pitch = BitConverter.ToInt16(bytes, 4);
 
-			return new Vector3(yaw / 16.0f, pitch / 16.0f, roll / 16.0f);
+			return new Vector3(yaw / 16.0f, pitch / 16.0f, - roll / 16.0f);
 		}
 	}
 }

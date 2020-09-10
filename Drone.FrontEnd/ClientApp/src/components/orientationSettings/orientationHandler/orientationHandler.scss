@@ -1,0 +1,41 @@
+.orientation-handler {
+    padding: 5px;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    .orientation-handler-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .orientation-handler-axis-label {
+            font-size: 20px;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+    }
+    .orientation-handler-body {        
+        .orientation-handler-type-switch {
+            width: 35%;
+            min-width: 175px;
+
+            * {
+                font-size: 15px;
+
+                .toggle {
+                    transform: scale(0.5);
+                }
+            }
+        }
+
+        .orientation-handler-submit-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+    }
+}

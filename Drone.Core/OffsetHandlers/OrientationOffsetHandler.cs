@@ -3,22 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Drone.Core.Controllers
+namespace Drone.Core.OffsetHandlers
 {
     public class OrientationOffsetHandler : IOrientationOffsetHandler
     {
         public float Aggression { get; set; }
-        private readonly float maxThrust;
+        public float MaxThrottle { get; }
 
         public OrientationOffsetHandler(float aggression, float maxThrust)
         {
             this.Aggression = aggression;
-            this.maxThrust = maxThrust;
+            this.MaxThrottle = maxThrust;
         }
 
         public float HandleOffset(float offset)
         {
-            float targetPower = maxThrust * Math.Min(this.Aggression * offset, 1.0f);
+            float targetPower = MaxThrottle * Math.Max(this.Aggression * offset, 1.0f);
             return targetPower;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Drone.Core.Enums;
 using Drone.Core.Interfaces;
+using Drone.Core.OffsetHandlers;
 using Drone.Core.Sensors.Orientation;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,15 @@ namespace Drone.Core.Controllers
 {
     public class OrientationController
     {
-        private IOrientationSensor orientationSensor;
-        private bool running;
+        private readonly IOrientationSensor orientationSensor;
         private readonly MotorController motorController;
+        private readonly Dictionary<Axis, IOrientationOffsetHandler> orientationOffsetHandlers;
 
-        public Dictionary<Axis, IOrientationOffsetHandler> orientationOffsetHandlers;
 
         public Vector3 Orientation { get; private set; }
         public Vector3 Target { get; set; } = Vector3.Zero;
-
-        public bool Enabled { get; set; }
+        public bool IsSensorEnabled { get; private set; }
+        public bool IsAssistEnabled { get; set; }
 
         public float OverallAggression
         {
@@ -71,22 +71,22 @@ namespace Drone.Core.Controllers
 
         public void StartOrientationLoop()
         {
-            if (this.running)
+            if (this.IsSensorEnabled)
             {
                 return;
             }
-            this.running = true;
+            this.IsSensorEnabled = true;
             _ = Task.Run(OrientationLoop);
         }
 
         public void StopOrientationLoop()
         {
-            this.running = false;
+            this.IsSensorEnabled = false;
         }
 
         private async void OrientationLoop()
         {
-            while (true)
+            while (this.IsSensorEnabled)
             {
                 RunOrientationAssist();
                 await Task.Delay(10);
@@ -96,12 +96,23 @@ namespace Drone.Core.Controllers
         public void RunOrientationAssist()
         {
             this.Orientation = SanitizeOriention(this.orientationSensor.GetOrientation());
-            if (Enabled)
+            if (IsAssistEnabled)
             {
                 Debug.WriteLine($"Orient: {Orientation}");
                 Debug.WriteLine($"Target: {Target}");
                 HandleOrientationOffset(this.Orientation - this.Target);
             }
+        }
+
+        public IOrientationOffsetHandler? GetOffsetHandler(Axis axis)
+        {
+            this.orientationOffsetHandlers.TryGetValue(axis, out var value);
+            return value;
+        }
+
+        public void SetOffsetHandler(Axis axis, IOrientationOffsetHandler handler)
+        {
+            this.orientationOffsetHandlers[axis] = handler;
         }
 
         private void HandleOrientationOffset(Vector3 offset)
@@ -115,7 +126,7 @@ namespace Drone.Core.Controllers
 
         private float GetThrottleForOffset(Axis axis, float offset)
         {
-            if (this.orientationOffsetHandlers.TryGetValue(axis, out IOrientationOffsetHandler orientationOffsetHandler))
+            if (this.orientationOffsetHandlers.TryGetValue(axis, out IOrientationOffsetHandler? orientationOffsetHandler))
             {
                 return orientationOffsetHandler.HandleOffset(offset);
             }

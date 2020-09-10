@@ -6,7 +6,7 @@ namespace Drone.Simulator
 {
     public class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Task.Run(async () =>
             {

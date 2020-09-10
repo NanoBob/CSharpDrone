@@ -1,0 +1,41 @@
+@import "../../scss/variables.scss";
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .toggle-label {
+        font-size: 20px;
+        padding: 5px;
+    }
+
+    .toggle-wrapper {
+        padding: 5px;
+
+        .toggle {
+            border: 1px solid $accent;
+            border-radius: 24px;
+            display: flex;
+            width: 4em;
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            .toggle-indicator {
+                margin: 4px;
+                background-color: $accentDull;
+
+                width: 30px;
+                height: 30px;
+                border-radius: 20px;
+            }
+
+            
+            &.active {
+                background-color: $accentBackground;
+                justify-content: flex-end;
+            }
+        }
+    }
+}

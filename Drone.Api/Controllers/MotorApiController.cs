@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Drone.Core.Controllers
 {
-    public class MotorController : IController
+    public class MotorApiController : IController
     {
         public string BaseRoute => "/motors";
 
-        public MotorController()
+        public MotorApiController()
         {
         }
 
@@ -20,13 +20,9 @@ namespace Drone.Core.Controllers
         {
             webserver.AddAction("GET", BaseRoute, (context) =>
             {
-                var throttles = drone.GetMotorThrottles();
                 return new
                 {
-                    frontLeft = throttles.Item1,
-                    frontRight = throttles.Item2,
-                    rearLeft = throttles.Item3,
-                    rearRight = throttles.Item4
+                    value = drone.AreMotorsEnabled
                 };
             });
 
@@ -50,7 +46,19 @@ namespace Drone.Core.Controllers
                 };
             });
 
-            webserver.AddAction("POST", BaseRoute + "/test", (context) =>
+            webserver.AddAction("GET", $"{BaseRoute}/throttles", (context) =>
+            {
+                var throttles = drone.GetMotorThrottles();
+                return new
+                {
+                    frontLeft = throttles.Item1,
+                    frontRight = throttles.Item2,
+                    rearLeft = throttles.Item3,
+                    rearRight = throttles.Item4
+                };
+            });
+
+            webserver.AddAction("POST", $"{BaseRoute}/test", (context) =>
             {
                 string input;
                 using (StreamReader reader = new StreamReader(context.Request.InputStream))
@@ -70,7 +78,7 @@ namespace Drone.Core.Controllers
                 };
             });
 
-            webserver.AddAction("POST", BaseRoute + "/setSpeed", (context) =>
+            webserver.AddAction("POST", $"{BaseRoute}/throttle", (context) =>
             {
                 string input;
                 using (StreamReader reader = new StreamReader(context.Request.InputStream))

@@ -1,5 +1,7 @@
 ﻿using Drone.Core.Controllers;
 using Drone.Core.Devices.Pwm;
+using Drone.Core.Enums;
+using Drone.Core.Interfaces;
 using Drone.Core.Structs;
 using System;
 using System.Collections.Generic;
@@ -19,16 +21,10 @@ namespace Drone.Core
         }
 
         public Position Position => this.gpsController.Position;
-
-        public Tuple<float, float, float, float> GetMotorThrottles()
-        {
-            return new Tuple<float, float, float, float>(
-                (float)this.motorController.FrontLeft.Speed,
-                (float)this.motorController.FrontRight.Speed,
-                (float)this.motorController.RearLeft.Speed,
-                (float)this.motorController.RearRight.Speed
-            );
-        }
+        public bool IsOrientationSensorEnabled => this.orientationController.IsSensorEnabled;
+        public bool IsOrientationAssistEnabled => this.orientationController.IsAssistEnabled;
+        public bool IsGpsEnabled => this.gpsController.IsEnabled;
+        public bool AreMotorsEnabled => this.motorController.IsEnabled;
 
         public float MotorThrottle
         {
@@ -38,11 +34,6 @@ namespace Drone.Core
         public float OrientationAssistAgression
         {
             set => this.orientationController.OverallAggression = value;
-        }
-
-        public bool IsSelfLearning
-        {
-            set => throw new NotImplementedException();
         }
 
         private readonly PwmController pwmController;
@@ -70,22 +61,38 @@ namespace Drone.Core
             this.orientationController.StartOrientationLoop();
         }
 
+        public Tuple<float, float, float, float> GetMotorThrottles()
+        {
+            return new Tuple<float, float, float, float>(
+                (float)this.motorController.FrontLeft.Speed,
+                (float)this.motorController.FrontRight.Speed,
+                (float)this.motorController.RearLeft.Speed,
+                (float)this.motorController.RearRight.Speed
+            );
+        }
+
         public void StartOrientationThread() => this.orientationController.StartOrientationLoop();
 
         public void StopOrientationThread() => this.orientationController.StopOrientationLoop();
 
-        public void StartOrientationAssist() => this.orientationController.Enabled = true;
+        public void StartOrientationAssist() => this.orientationController.IsAssistEnabled = true;
 
-        public void StopOrientationAssist() => this.orientationController.Enabled = false;
+        public void StopOrientationAssist() => this.orientationController.IsAssistEnabled = false;
 
-        public void StartGps() => this.gpsController.Enabled = true;
+        public void StartGps() => this.gpsController.IsEnabled = true;
 
-        public void StopGps() => this.gpsController.Enabled = false;
+        public void StopGps() => this.gpsController.IsEnabled = false;
 
         public Task RunTest(float value) => this.motorController.RunTest(value);
 
         public void EnableMotors() => this.motorController.Enable();
 
         public void DisableMotors() => this.motorController.Disable();
+
+        public void SetOffsetHandler(Axis axis, IOrientationOffsetHandler offsetHandler) 
+            => this.orientationController.SetOffsetHandler(axis, offsetHandler);
+
+        public IOrientationOffsetHandler? GetOffsetHandler(Axis axis)
+            => this.orientationController.GetOffsetHandler(axis);
     }
 }

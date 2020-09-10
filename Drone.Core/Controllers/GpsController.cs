@@ -14,7 +14,7 @@ namespace Drone.Core.Controllers
         public Position Position { get; private set; } = new Position() { latitude = 0, longitude = 0 };
 
         private bool enabled;
-        public bool Enabled
+        public bool IsEnabled
         {
             get => this.enabled;
             set

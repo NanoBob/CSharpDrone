@@ -1,0 +1,16 @@
+.Notification-container-wrapper {
+    position: fixed;
+    pointer-events: none;
+    width: calc(100vw - 20px);
+    height: 100vh;
+  
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+  
+    .Notification-container {
+      pointer-events: initial;
+      z-index: 20;
+    }
+  }
+  

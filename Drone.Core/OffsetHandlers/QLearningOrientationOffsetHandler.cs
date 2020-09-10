@@ -5,23 +5,30 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Drone.Core.Controllers
+namespace Drone.Core.OffsetHandlers
 {
     public class QLearningOrientationOffsetHandler : IOrientationOffsetHandler
     {
-        private QTable qTable;
+        private readonly QTable qTable;
 
         private bool isFirst;
         private float previousOffset;
         private float previousAction;
+
+        public float MinThrottle { get; }
+        public float MaxThrottle { get; }
+        public float ThrottleIncrement { get; }
 
         public QLearningOrientationOffsetHandler(
             float minOffset = -180, float maxOffset = 180, float offsetIncrements = 1, 
             float minThrottle = -0.3f, float maxThrottle = 0.3f, float throttleIncrement = 0.01f
         )
         {
-            this.qTable = new QTable(minOffset, maxOffset, offsetIncrements, minThrottle, maxThrottle, throttleIncrement);
+            MinThrottle = minThrottle;
+            MaxThrottle = maxThrottle;
+            ThrottleIncrement = throttleIncrement;
 
+            this.qTable = new QTable(minOffset, maxOffset, offsetIncrements, minThrottle, maxThrottle, throttleIncrement);
             this.isFirst = true;
         }
 
@@ -37,7 +44,6 @@ namespace Drone.Core.Controllers
             }
 
             var action = this.qTable.GetAction(offset);
-            Debug.WriteLine($"Performing {action}");
             this.previousOffset = offset;
             this.previousAction = action;
 

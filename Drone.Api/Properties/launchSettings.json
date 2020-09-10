@@ -6,7 +6,7 @@
     "Remote debugger": {
       "commandName": "Executable",
       "executablePath": "ssh",
-      "commandLineArgs": "pi@raspberrypi \"~/startdronev2\""
+      "commandLineArgs": "pi@raspberrypi \"~/startdrone\""
     }
   }
 }

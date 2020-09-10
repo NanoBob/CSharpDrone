@@ -1,0 +1,30 @@
+@import "../../scss/variables.scss";
+
+.Notification {
+    padding: 25px;
+    margin-bottom: 20px;
+
+    display: block;
+    color: white;
+
+    outline: 1px solid $accent;
+    border-left: 5px solid $accent;
+
+    background-color: $background;
+
+    &.Notification-Success {
+        border-left-color: green;
+    }
+
+    &.Notification-Info {
+        border-left-color: blue;
+    }
+
+    &.Notification-Warning {
+        border-left-color: orange;
+    }
+
+    &.Notification-Error {
+        border-left-color: red;
+    }
+}

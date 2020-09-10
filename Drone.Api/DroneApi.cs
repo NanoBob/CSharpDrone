@@ -57,7 +57,7 @@ namespace Drone.Core
             }
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

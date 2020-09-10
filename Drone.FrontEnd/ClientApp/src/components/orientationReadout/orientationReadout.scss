@@ -1,0 +1,27 @@
+@import "../../scss/variables";
+
+.orientation-readout {
+    display: flex;
+    justify-content: space-between;
+
+    .orientation-axis {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        width: 100%;
+
+        border-left: 1px solid $accentDull;
+        border-right: 1px solid $accentDull;
+
+        .axis-value {
+            font-size: 30px;
+        }
+
+        .axis-label {
+            font-size: 15px;
+            padding: 5px;
+            padding-bottom: 10px;
+        }
+    }
+}

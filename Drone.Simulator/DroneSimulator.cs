@@ -1,6 +1,7 @@
 ﻿using Drone.Core.Controllers;
 using Drone.Core.Enums;
 using Drone.Core.Interfaces;
+using Drone.Core.OffsetHandlers;
 using Drone.Core.Sensors.Orientation;
 using Drone.Simulator.Devices;
 using System;
@@ -69,7 +70,7 @@ namespace Drone.Simulator
             this.orientationSensor.Orientation = startOrientation;
             this.orientationController.Target = targetOrientation;
 
-            this.orientationController.Enabled = true;
+            this.orientationController.IsAssistEnabled = true;
 
             //this.orientationController.OverallAggression = 0.13f;
 
@@ -86,13 +87,15 @@ namespace Drone.Simulator
                 Thread.Sleep(1);
             }
 
-            foreach(var offsetHandler in this.orientationController.orientationOffsetHandlers)
+            foreach (Axis axis in Enum.GetValues(typeof(Axis)))
             {
-                if (offsetHandler.Value is QLearningOrientationOffsetHandler qLearningOrientationOffsetHandler)
-                {
-                    File.WriteAllText($"{offsetHandler.Key.ToString()}.json", qLearningOrientationOffsetHandler.SaveToJson());
-                }
+                File.WriteAllText(
+                    $"{axis}.json", 
+                    (this.orientationController.GetOffsetHandler(axis) as QLearningOrientationOffsetHandler)
+                        ?.SaveToJson()
+                );
             }
+
             return this.orientationSensor.Orientation;
         }
 

@@ -1,0 +1,33 @@
+@import "../../scss/variables.scss";
+
+.panel {
+    border: 2px solid $accent;
+    color: $accent;
+    width: 100%;
+    box-sizing: border-box;
+
+
+    .panel-header {
+        background-color: $accentBackground;
+
+        display: flex;
+        justify-content:space-between;
+
+        padding: 5px;
+        &:hover {
+            cursor: pointer;
+        }
+
+        .panel-title {
+            font-size: 20px;
+        }
+
+        .toggle-button {
+            padding: 5px;
+        }
+    }
+
+    .panel-body {
+        border-top: 1px solid $accent;
+    }
+}
