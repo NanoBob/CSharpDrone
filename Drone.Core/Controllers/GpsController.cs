@@ -43,6 +43,12 @@ namespace Drone.Core.Controllers
             await this.gpsSensor.Init();
         }
 
-        private void UpdatePosition(Position position) => this.Position = position;
+        private void UpdatePosition(Position position)
+        {
+            this.Position = position;
+            this.PositionChanged?.Invoke(position);
+        }
+
+        public event Action<Position>? PositionChanged;
     }
 }

@@ -54,7 +54,7 @@ const orientationReducer = (
     case SET_ORIENTATION:
       return {
         ...state,
-        orientation: action.orientation,
+        orientation: action.value,
       };
     case SET_SENSOR:
       return {

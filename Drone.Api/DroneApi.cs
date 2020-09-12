@@ -1,4 +1,5 @@
-﻿using Drone.Core.AuthorizationHandlers;
+﻿using Drone.Api;
+using Drone.Core.AuthorizationHandlers;
 using Drone.Core.Controllers;
 using Drone.Core.Interfaces;
 using System;
@@ -13,13 +14,17 @@ namespace Drone.Core
 {
     public class DroneApi
     {
-        private readonly WebServer webserver;
+        private readonly HttpServer webserver;
         private readonly Drone drone;
 
         public DroneApi()
         {
-            this.webserver = new WebServer("http", "*", 6606);
+            this.webserver = new HttpServer("http", "*", 6606);
             this.drone = new Drone();
+
+            drone.ThrottleChanged += (value) => webserver.Broadcast(WebSocketMessageFactory.CreateThrottlesMessage(value));
+            drone.PositionChanged += (value) => webserver.Broadcast(WebSocketMessageFactory.CreatePositionMessage(value));
+            drone.OrientationChanged += (value) => webserver.Broadcast(WebSocketMessageFactory.CreateOrientationMessage(value));
 
             Task.Run(async () =>
             {

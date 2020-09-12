@@ -16,7 +16,7 @@ namespace Drone.Core.Controllers
         {
         }
 
-        public void AddRoutes(WebServer webserver, Drone drone)
+        public void AddRoutes(HttpServer webserver, Drone drone)
         {
             webserver.AddAction("GET", BaseRoute, (context) =>
             {

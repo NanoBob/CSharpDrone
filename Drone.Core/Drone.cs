@@ -44,9 +44,18 @@ namespace Drone.Core
         public Drone()
         {
             this.pwmController = new PwmController();
+
             this.motorController = new MotorController(pwmController);
+            this.motorController.ThrottleChanged += (value) 
+                => ThrottleChanged?.Invoke(value);
+
             this.orientationController = new OrientationController(this.motorController);
+            this.orientationController.OrientationChanged += (value) 
+                => OrientationChanged?.Invoke(value);
+
             this.gpsController = new GpsController();
+            this.gpsController.PositionChanged += (value) 
+                => PositionChanged?.Invoke(value);
         }
 
         public async Task Init()
@@ -94,5 +103,9 @@ namespace Drone.Core
 
         public IOrientationOffsetHandler? GetOffsetHandler(Axis axis)
             => this.orientationController.GetOffsetHandler(axis);
+
+        public event Action<Tuple<float, float, float, float>>? ThrottleChanged;
+        public event Action<Orientation>? OrientationChanged;
+        public event Action<Position>? PositionChanged;
     }
 }

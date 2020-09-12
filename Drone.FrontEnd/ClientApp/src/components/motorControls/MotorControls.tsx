@@ -35,7 +35,9 @@ export class MotorControls extends React.Component<Props, State> {
 
     public render() {
         return <Panel title="Motors">
-            <DroneInput type="number" value={this.state.desiredThrottle} onChange={(value) => this.setDesiredThrottle(value.target.value)} label="Throttle"></DroneInput>
+            <div className="controls-wrapper">
+                <DroneInput type="number" value={this.state.desiredThrottle} onChange={(value) => this.setDesiredThrottle(value.target.value)} label="Throttle"></DroneInput>
+            </div>
         </Panel>
     }
 }

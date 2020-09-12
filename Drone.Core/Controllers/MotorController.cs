@@ -97,6 +97,8 @@ namespace Drone.Core.Controllers
             RearLeft.Run(0);
             RearRight.Run(0);
             IsEnabled = false;
+
+            InvokeThrottleChanged();
         }
 
         private void StopAllMotors()
@@ -120,6 +122,18 @@ namespace Drone.Core.Controllers
             FrontRight.Run(throttle + pitch - roll - yaw);
             RearLeft.Run(throttle - pitch + roll - yaw);
             RearRight.Run(throttle - pitch - roll + yaw);
+
+            InvokeThrottleChanged();
+        }
+
+        private void InvokeThrottleChanged()
+        {
+            this.ThrottleChanged?.Invoke(new Tuple<float, float, float, float>(
+                (float)FrontLeft.Speed,
+                (float)FrontRight.Speed,
+                (float)RearLeft.Speed,
+                (float)RearRight.Speed
+            ));
         }
 
         public async Task RunTest(float target)
@@ -173,6 +187,8 @@ namespace Drone.Core.Controllers
             }
             this.Throttle = 0;
         }
+
+        public event Action<Tuple<float, float, float, float>>? ThrottleChanged;
     }
 
     struct Note

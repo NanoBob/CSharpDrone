@@ -25,22 +25,22 @@ export class OrientationReadout extends React.Component<Props, State> {
         this.state = {};
 
         this.props.requestOrientation()
-        setInterval(() => this.props.requestOrientation(), 250);
+        // setInterval(() => this.props.requestOrientation(), 250);
     }    
 
     public render() {
         return <Panel title="Orientation readout">
             <div className="orientation-readout">
                 <div className="orientation-axis">
-                    <span className="axis-value">{this.props.orientationState.orientation.yaw}</span>
+                    <span className="axis-value">{Math.round(this.props.orientationState.orientation.yaw * 100) / 100}</span>
                     <span className="axis-label">Yaw</span>
                 </div>
                 <div className="orientation-axis">
-                    <span className="axis-value">{this.props.orientationState.orientation.pitch}</span>
+                    <span className="axis-value">{Math.round(this.props.orientationState.orientation.pitch * 100) / 100}</span>
                     <span className="axis-label">Pitch</span>
                 </div>
                 <div className="orientation-axis">
-                    <span className="axis-value">{this.props.orientationState.orientation.roll}</span>
+                    <span className="axis-value">{Math.round(this.props.orientationState.orientation.roll * 100) / 100}</span>
                     <span className="axis-label">Roll</span>
                 </div>
             </div>

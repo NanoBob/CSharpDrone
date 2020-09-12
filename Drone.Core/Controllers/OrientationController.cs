@@ -2,6 +2,7 @@
 using Drone.Core.Interfaces;
 using Drone.Core.OffsetHandlers;
 using Drone.Core.Sensors.Orientation;
+using Drone.Core.Structs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -96,6 +97,7 @@ namespace Drone.Core.Controllers
         public void RunOrientationAssist()
         {
             this.Orientation = SanitizeOriention(this.orientationSensor.GetOrientation());
+            OrientationChanged?.Invoke(new Orientation(this.Orientation));
             if (IsAssistEnabled)
             {
                 Debug.WriteLine($"Orient: {Orientation}");
@@ -141,5 +143,7 @@ namespace Drone.Core.Controllers
                 orientation.Z > 180 ? orientation.Z - 360 : orientation.Z < -180 ? orientation.Z + 360 : orientation.Z
             );
         }
+
+        public event Action<Orientation>? OrientationChanged;
     }
 }

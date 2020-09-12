@@ -6,6 +6,6 @@ namespace Drone.Core.Interfaces
 {
     public interface IController
     {
-        void AddRoutes(WebServer webserver, Drone drone);
+        void AddRoutes(HttpServer webserver, Drone drone);
     }
 }

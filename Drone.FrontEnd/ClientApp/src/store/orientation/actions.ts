@@ -15,7 +15,7 @@ export const requestOrientation = () => {
 
       dispatch({
         type: SET_ORIENTATION,
-        orientation: result.data,
+        value: result.data,
       });
     } catch (error) {
       addHttpErrorNotification(error)(dispatch);

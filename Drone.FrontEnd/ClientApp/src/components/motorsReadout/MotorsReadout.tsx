@@ -21,7 +21,7 @@ export class MotorsReadout extends React.Component<Props, State> {
         this.state = {};
 
         this.props.requestThrottles()
-        setInterval(() => this.props.requestThrottles(), 250);
+        // setInterval(() => this.props.requestThrottles(), 250);
     }    
 
     public render() {

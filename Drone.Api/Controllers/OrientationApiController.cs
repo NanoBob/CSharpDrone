@@ -13,7 +13,7 @@ namespace Drone.Core.Controllers
 {
     public class OrientationApiController : IController
     {
-        public void AddRoutes(WebServer webserver, Drone drone)
+        public void AddRoutes(HttpServer webserver, Drone drone)
         {
             webserver.AddAction("GET", "/orientation", (context) =>
             {
