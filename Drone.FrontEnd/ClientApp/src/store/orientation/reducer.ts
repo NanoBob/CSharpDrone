@@ -4,6 +4,7 @@ import {
   SET_SENSOR,
   SET_ASSIST,
   SET_ORIENTATION_HANDLER,
+  SET_ASSIST_RATE
 } from "./types";
 import { Axis } from "../../enums/Axis";
 
@@ -48,6 +49,8 @@ const orientationReducer = (
         pitch: 0,
         roll: 0,
       },
+
+      assistRate: 1
     };
   }
   switch (action.type) {
@@ -65,6 +68,11 @@ const orientationReducer = (
       return {
         ...state,
         isAssistEnabled: action.value,
+      };
+    case SET_ASSIST_RATE:
+      return {
+        ...state,
+        assistRate: action.value,
       };
     case SET_ORIENTATION_HANDLER:
       return {

@@ -24,6 +24,9 @@ const orientationReducer = (
         isGpsEnabled: action.value,
       };
     case SET_GPS_POSITION:
+      if (isNaN(action.value.longitude) || isNaN(action.value.latitude)) {
+        return state;
+      }
       return {
         ...state,
         position: action.value,

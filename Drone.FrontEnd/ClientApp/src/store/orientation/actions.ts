@@ -1,4 +1,4 @@
-import { SET_ORIENTATION, SET_SENSOR, SET_ASSIST, SET_ORIENTATION_HANDLER, OrientationHandlerState } from "./types";
+import { SET_ORIENTATION, SET_SENSOR, SET_ASSIST, SET_ORIENTATION_HANDLER, OrientationHandlerState, SET_ASSIST_RATE } from "./types";
 import axios from "axios";
 import { getAuthenticationHash } from "../../utilities/authenticationHash";
 import { config } from "../../config";
@@ -105,6 +105,45 @@ export const setAssistState = (state: boolean) => {
   };
 };
 
+export const requestAssistRate = () => {
+  return async (dispatch: any, getState: any) => {
+    try {
+      const url = `${config.baseUrl}/orientation/assist/rate`;
+      const result = await axios.get(url, {
+        headers: { Authorization: `Bearer ${getAuthenticationHash(config.authenticationKey)}` },
+    });
+
+      dispatch({
+        type: SET_ASSIST_RATE,
+        value: result.data.value,
+      });
+    } catch (error) {
+      addHttpErrorNotification(error)(dispatch);
+    }
+  };
+};
+
+export const setAssistRate = (rate: number) => {
+  return async (dispatch: any, getState: any) => {
+    try {
+      const url = `${config.baseUrl}/orientation/assist/rate`;
+      const result = await axios.post(url, {
+          value: rate
+        }, {
+            headers: { Authorization: `Bearer ${getAuthenticationHash(config.authenticationKey)}` },
+        });
+
+      dispatch({
+        type: SET_ASSIST_RATE,
+        value: rate,
+      });
+      addNotification(result.data.message)(dispatch);
+    } catch (error) {
+      addHttpErrorNotification(error)(dispatch);
+    }
+  };
+};
+
 export const requestOrientationHandler = (axis: Axis) => {
     return async (dispatch: any, getState: any) => {
       try {
@@ -117,13 +156,13 @@ export const requestOrientationHandler = (axis: Axis) => {
           type: SET_ORIENTATION_HANDLER,
           value: {
             axis: result.data.axis,
-            agression: result.data.agression ?? 0,
+            agression: Number(result.data.agression ?? 0),
 
             isQLearning: result.data.isQLearning,            
 
-            minThrottle: result.data.minThrottle ?? 0,
-            maxThrottle: result.data.maxThrottle ?? 0,
-            throttleIncrement: result.data.throttleIncrement ?? 0
+            minThrottle: Number(result.data.minThrottle ?? 0),
+            maxThrottle: Number(result.data.maxThrottle ?? 0),
+            throttleIncrement: Number(result.data.throttleIncrement ?? 0)
           },
         });
       } catch (error) {

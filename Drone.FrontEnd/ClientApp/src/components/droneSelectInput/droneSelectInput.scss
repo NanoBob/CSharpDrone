@@ -1,0 +1,57 @@
+@import "../../scss/variables.scss";
+
+.input-select-wrapper {
+    border: 1px solid $accent;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    margin-top: 2px;
+
+    .input-select-label {
+        padding: 5px;
+        width: 25%;
+        min-width: 175px;
+
+        border-right: 1px solid $accent;
+    }
+
+    .input-select-input-wrapper {
+        position: relative;
+        width: 75%;
+
+        input {
+            background-color: transparent;
+            border: none;
+            outline: none;
+    
+            color: $accent;
+            padding: 5px;
+    
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    
+        .select-options-wrapper {
+            position: absolute;
+            display: block;
+            border: 1px solid $accent;
+            border-radius: 4px;
+            z-index: 10;
+            left: 0;
+            top: -4px;
+            width: 100%;
+            background-color: $background;
+            padding: 5px;
+            box-sizing: border-box;
+    
+            .select-option {
+    
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.01);
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

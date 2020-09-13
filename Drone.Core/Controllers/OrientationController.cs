@@ -23,6 +23,9 @@ namespace Drone.Core.Controllers
         public Vector3 Target { get; set; } = Vector3.Zero;
         public bool IsSensorEnabled { get; private set; }
         public bool IsAssistEnabled { get; set; }
+        public int FramesPerAssist { get; set; }
+
+        private int assistCount;
 
         public float OverallAggression
         {
@@ -44,6 +47,9 @@ namespace Drone.Core.Controllers
             this.motorController = motorController;
 
             this.orientationOffsetHandlers = offsetHandlers;
+
+            this.assistCount = 0;
+            this.FramesPerAssist = 1;
         }
 
         public OrientationController(MotorController motorController, IOrientationSensor orientationSensor): 
@@ -53,8 +59,8 @@ namespace Drone.Core.Controllers
                 new Dictionary<Axis, IOrientationOffsetHandler>()
                 {
                     [Axis.Yaw] = new OrientationOffsetHandler(0.0f, 0.1f),
-                    [Axis.Pitch] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
-                    [Axis.Roll] = new OrientationOffsetHandler(1.0f / 45.0f, 0.3f),
+                    [Axis.Pitch] = new OrientationOffsetHandler(5.0f, 0.2f),
+                    [Axis.Roll] = new OrientationOffsetHandler(5.0f, 0.2f),
                 })
         {
 
@@ -98,7 +104,7 @@ namespace Drone.Core.Controllers
         {
             this.Orientation = SanitizeOriention(this.orientationSensor.GetOrientation());
             OrientationChanged?.Invoke(new Orientation(this.Orientation));
-            if (IsAssistEnabled)
+            if (IsAssistEnabled && (++assistCount % FramesPerAssist == 0))
             {
                 Debug.WriteLine($"Orient: {Orientation}");
                 Debug.WriteLine($"Target: {Target}");

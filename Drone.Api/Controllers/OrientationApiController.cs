@@ -78,6 +78,31 @@ namespace Drone.Core.Controllers
                 };
             });
 
+            webserver.AddAction("GET", "/orientation/assist/rate", (context) =>
+            {
+                return new
+                {
+                    value = drone.OrientationAssistRate
+                };
+            });
+
+            webserver.AddAction("POST", "/orientation/assist/rate", (context) =>
+            {
+                string input;
+                using (StreamReader reader = new StreamReader(context.Request.InputStream))
+                {
+                    input = reader.ReadToEnd();
+                }
+
+                OrientationAssistRateDto dto = JsonConvert.DeserializeObject<OrientationAssistRateDto>(input);
+
+                drone.OrientationAssistRate = dto.value;
+                return new
+                {
+                    message = "Orientation assist rate updated"
+                };
+            });
+
             foreach (Axis axis in Enum.GetValues(typeof(Axis)))
             {
                 webserver.AddAction("POST", $"/orientation/assist/handler/{axis}", (context) =>

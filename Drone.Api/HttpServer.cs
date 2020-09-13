@@ -57,6 +57,7 @@ namespace Drone.Core
         {
             var socket = await context.AcceptWebSocketAsync("drone");
             this.webSockets.Add(socket.WebSocket);
+            this.SocketConnected?.Invoke(socket.WebSocket);
         }
 
         private void HandleWebRequest(HttpListenerContext context)
@@ -143,5 +144,7 @@ namespace Drone.Core
                 webSocket.SendAsync(payload, WebSocketMessageType.Binary, true, new CancellationToken())
             ));
         }
+
+        public event Action<WebSocket>? SocketConnected;
     }
 }

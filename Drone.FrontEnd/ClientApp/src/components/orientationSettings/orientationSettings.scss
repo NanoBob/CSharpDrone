@@ -1,3 +1,10 @@
-.orientation-settings-wrapper {
+@import "../../scss/variables.scss";
+
+.orientation-toggles-wrapper {
     padding: 5px;
+}
+
+.orientation-handlers-wrapper {
+    padding: 5px;
+    border-top: 1px solid $accent;
 }

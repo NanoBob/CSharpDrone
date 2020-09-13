@@ -26,6 +26,12 @@ namespace Drone.Core
         public bool IsGpsEnabled => this.gpsController.IsEnabled;
         public bool AreMotorsEnabled => this.motorController.IsEnabled;
 
+        public int OrientationAssistRate
+        {
+            get => this.orientationController.FramesPerAssist;
+            set => this.orientationController.FramesPerAssist = value;
+        }
+
         public float MotorThrottle
         {
             set => this.motorController.Throttle = value;

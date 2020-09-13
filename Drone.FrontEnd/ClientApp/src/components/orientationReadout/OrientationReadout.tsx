@@ -16,8 +16,7 @@ type Props = {
     orientationState: OrientationState
 };
 
-type State = {
-};
+type State = {};
 
 export class OrientationReadout extends React.Component<Props, State> {
     constructor(props: Props) {

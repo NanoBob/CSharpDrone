@@ -25,9 +25,6 @@ export class GeneralSettings extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
-
-        this.props.requestMotorsState()
-        this.props.requestGpsState()
     }    
 
     public render() {

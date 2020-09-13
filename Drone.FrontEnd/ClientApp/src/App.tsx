@@ -7,7 +7,6 @@ import OrientationReadout from "./components/orientationReadout/OrientationReado
 import MotorsReadout from "./components/motorsReadout/MotorsReadout";
 import NotificationContainer from "./components/notifications/NotificationContainer";
 import MotorControls from "./components/motorControls/MotorControls";
-import { Panel } from "./components/panel/Panel";
 import Map from "./components/map/Map";
 import { AppState } from "./store";
 import { requestDataStream } from "./store/datastream/actions";

@@ -1,4 +1,5 @@
 ﻿using Drone.Api;
+using Drone.Api.Dto;
 using Drone.Core.AuthorizationHandlers;
 using Drone.Core.Controllers;
 using Drone.Core.Interfaces;
@@ -6,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.WebSockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +28,8 @@ namespace Drone.Core
             drone.PositionChanged += (value) => webserver.Broadcast(WebSocketMessageFactory.CreatePositionMessage(value));
             drone.OrientationChanged += (value) => webserver.Broadcast(WebSocketMessageFactory.CreateOrientationMessage(value));
 
+            this.webserver.SocketConnected += HandleSocketConnect;
+
             Task.Run(async () =>
             {
                 try
@@ -43,6 +47,16 @@ namespace Drone.Core
                     Console.WriteLine($"{exception.Message}\n{exception.StackTrace}");
                 }
             });
+        }
+
+        private async void HandleSocketConnect(WebSocket socket)
+        {
+            await socket.SendAsync(WebSocketMessageFactory.CreateFlagsMessage(
+                 (drone.AreMotorsEnabled ? DroneFlags.MotorsEnabled : 0) |
+                 (drone.IsGpsEnabled ? DroneFlags.GpsEnabled : 0) |
+                 (drone.IsOrientationSensorEnabled ? DroneFlags.OrientationSensorEnabled : 0) |
+                 (drone.IsOrientationAssistEnabled ? DroneFlags.OrientationAssistEnabled : 0)
+            ), System.Net.WebSockets.WebSocketMessageType.Binary, true, new CancellationToken());
         }
 
         private void AddActions()

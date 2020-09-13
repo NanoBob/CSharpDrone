@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Panel } from "../panel/Panel";
 import { Toggle } from "../toggle/Toggle";
+import { DroneSelectInput } from "../droneSelectInput/DroneSelectInput";
 import { OrientationHandler } from "./orientationHandler/OrientationHandler";
 import "./orientationSettings.scss";
 import { AppState } from "../../store";
-import { requestOrientation, setSensorState, setAssistState, requestSensorState, requestAssistState, requestOrientationHandler, setOrientationHandler } from "../../store/orientation/actions";
+import { requestOrientation, setSensorState, setAssistState, requestSensorState, requestAssistState, requestOrientationHandler, setOrientationHandler, requestAssistRate, setAssistRate } from "../../store/orientation/actions";
 import { connect } from "react-redux";
 import { OrientationState } from "../../store/orientation/types";
 import { Axis } from "../../enums/Axis";
@@ -13,9 +14,11 @@ type Props = {
     requestOrientation: any,
     requestSensorState: any,
     requestAssistState: any,
+    requestAssistRate: any,
+    requestOrientationHandler: any,
     setSensorState: any,
     setAssistState: any,
-    requestOrientationHandler: any,
+    setAssistRate: any,
     setOrientationHandler: any,
     orientationState: OrientationState
 };
@@ -24,24 +27,43 @@ type State = {
 };
 
 export class OrientationSettings extends React.Component<Props, State> {
+    private assistRates = [
+        { label: "100Hz", value: 1 },
+        { label: "50Hz", value: 2 },
+        // { label: "33Hz", value: 3 },
+        { label: "25Hz", value: 4 },
+        { label: "20Hz", value: 5 },
+        // { label: "17Hz", value: 6 },
+        // { label: "14Hz", value: 7 },
+        // { label: "13Hz", value: 8 },
+        // { label: "11Hz", value: 9 },
+        { label: "10Hz", value: 10 },
+        { label: "5Hz", value: 20 },
+        { label: "1Hz", value: 100 },
+    ]
+
     constructor(props: Props) {
         super(props);
         this.state = {};
 
-        this.props.requestSensorState()
-        this.props.requestAssistState()
+        this.props.requestAssistRate();
         this.props.requestOrientationHandler(Axis.Yaw);
         this.props.requestOrientationHandler(Axis.Pitch);
         this.props.requestOrientationHandler(Axis.Roll);
-    }    
+    }
 
     public render() {
         return <Panel title="Orientation settings">
-            <div className="orientation-settings-wrapper">
+            <div className="orientation-toggles-wrapper">
                 <div className="orientation-toggles">
                     <Toggle label="Sensor" value={this.props.orientationState.isSensorEnabled} onToggle={(state) => this.props.setSensorState(state)}></Toggle>
                     <Toggle label="Assist" value={this.props.orientationState.isAssistEnabled} onToggle={this.props.setAssistState}></Toggle>
                 </div>
+                <div className="assist-rate-wrapper">
+                    <DroneSelectInput value={this.props.orientationState.assistRate} items={this.assistRates} label="Assist rate" onChange={this.props.setAssistRate}></DroneSelectInput>
+                </div>
+            </div>                
+            <div className="orientation-handlers-wrapper">
                 <div className="orientation-handlers">
                     <OrientationHandler 
                         orientationHandler={this.props.orientationState.orientationHandlers[Axis.Yaw]}
@@ -67,6 +89,6 @@ export default connect(
         orientationState: state.orientation
       }
     },
-    { requestOrientation, requestSensorState, requestAssistState, setSensorState, setAssistState, requestOrientationHandler, setOrientationHandler },
+    { requestOrientation, requestSensorState, requestAssistState, setSensorState, setAssistState, requestOrientationHandler, setOrientationHandler, requestAssistRate, setAssistRate },
   )(OrientationSettings)
   

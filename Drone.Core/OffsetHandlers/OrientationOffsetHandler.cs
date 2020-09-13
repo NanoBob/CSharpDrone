@@ -18,7 +18,7 @@ namespace Drone.Core.OffsetHandlers
 
         public float HandleOffset(float offset)
         {
-            float targetPower = MaxThrottle * Math.Max(this.Aggression * offset, 1.0f);
+            float targetPower = MaxThrottle * Math.Clamp(this.Aggression * (offset / 180.0f), -1.0f, 1.0f);
             return targetPower;
         }
     }

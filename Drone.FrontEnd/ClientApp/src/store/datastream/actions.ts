@@ -1,15 +1,13 @@
 import { config } from "../../config";
 import { addHttpErrorNotification, addNotification} from "../notifications/actions";
-import { SET_GPS_POSITION } from "../gps/types";
-import { SET_MOTOR_THROTTLES } from "../motors/types";
-import { SET_ORIENTATION } from "../orientation/types";
+import { SET_GPS, SET_GPS_POSITION } from "../gps/types";
+import { SET_MOTORS, SET_MOTOR_THROTTLES } from "../motors/types";
+import { SET_ASSIST, SET_ORIENTATION, SET_SENSOR } from "../orientation/types";
 import { NotificationType } from "../notifications/types";
+import { requestAssistRate, requestOrientationHandler } from "../orientation/actions";
+import { Axis } from "../../enums/Axis";
+import { MessageType, DroneFlags } from "./types"
 
-enum MessageType {
-  Throttles,
-  Orientation,
-  Position
-}
 
 let socket: WebSocket | null;
 let socketDispatch: any;
@@ -19,13 +17,23 @@ function openSocket() {
 
   socket.addEventListener("open", handleSocketOpen)
   socket.addEventListener("error", console.error);
-  socket.addEventListener("message", handleSocketMessage)
   socket.addEventListener("close", handleSocketClose);
+  socket.addEventListener("message", handleSocketMessage)
 }
 
 function handleSocketOpen() {
-  console.log("WebSocket opened");
   addNotification("Data stream connected", NotificationType.Success)(socketDispatch);
+
+  requestAssistRate()(socketDispatch, null);
+  requestOrientationHandler(Axis.Yaw)(socketDispatch, null);
+  requestOrientationHandler(Axis.Pitch)(socketDispatch, null);
+  requestOrientationHandler(Axis.Roll)(socketDispatch, null);
+}
+
+function handleSocketClose(event: CloseEvent) {
+  socket = null;
+  addNotification("Data stream disconnected", NotificationType.Error)(socketDispatch);
+  openSocket();
 }
 
 async function handleSocketMessage(event: MessageEvent) {
@@ -42,7 +50,10 @@ async function handleSocketMessage(event: MessageEvent) {
       break;
     case MessageType.Position:
       handlePositionMessage(view);
-     break;
+       break;
+    case MessageType.Flags:
+      handleFlagsMessage(view);
+      break;
   }
 }
 
@@ -82,10 +93,25 @@ function handlePositionMessage(view: DataView) {
   });
 }
 
-function handleSocketClose(event: CloseEvent) {
-  socket = null;
-  addNotification("Data stream disconnected", NotificationType.Error)(socketDispatch);
-  openSocket();
+function handleFlagsMessage(view: DataView) {
+  const value = view.getUint16(1, true) as DroneFlags;
+
+  socketDispatch({
+    type: SET_MOTORS,
+    value: (value & DroneFlags.MotorsEnabled) !== 0
+  });
+  socketDispatch({
+    type: SET_GPS,
+    value: (value & DroneFlags.GpsEnabled) !== 0
+  });
+  socketDispatch({
+    type: SET_SENSOR,
+    value: (value & DroneFlags.OrientationSensorEnabled) !== 0
+  });
+  socketDispatch({
+    type: SET_ASSIST,
+    value: (value & DroneFlags.OrientationAssistEnabled) !== 0
+  });
 }
 
 export const requestDataStream = () => {

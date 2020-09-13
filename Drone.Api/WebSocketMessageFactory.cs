@@ -1,4 +1,5 @@
-﻿using Drone.Core.Structs;
+﻿using Drone.Api.Dto;
+using Drone.Core.Structs;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace Drone.Api
     {
         Throttles,
         Orientation,
-        Position
+        Position,
+        Flags
     }
 
     public static class WebSocketMessageFactory
@@ -40,6 +42,13 @@ namespace Drone.Api
             return new byte[] { (byte)WebSocketMessageType.Position }
                 .Concat(BitConverter.GetBytes(position.longitude))
                 .Concat(BitConverter.GetBytes(position.latitude))
+                .ToArray();
+        }
+
+        public static byte[] CreateFlagsMessage(DroneFlags value)
+        {
+            return new byte[] { (byte)WebSocketMessageType.Flags }
+                .Concat(BitConverter.GetBytes((ushort)value))
                 .ToArray();
         }
     }
