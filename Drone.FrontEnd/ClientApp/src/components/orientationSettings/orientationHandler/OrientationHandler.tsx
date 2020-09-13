@@ -40,7 +40,6 @@ export class OrientationHandler extends React.Component<Props, State> {
             this.setState({ orientationHandler: this.props.orientationHandler })
         }
         this.setState({isCollapsed: !this.state.isCollapsed});
-
     }
 
     toggleQLearning() {

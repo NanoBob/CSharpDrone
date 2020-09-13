@@ -10,10 +10,12 @@ import MotorControls from "./components/motorControls/MotorControls";
 import Map from "./components/map/Map";
 import { AppState } from "./store";
 import { requestDataStream } from "./store/datastream/actions";
+import { setMotorsState } from "./store/motors/actions";
 import { connect } from "react-redux";
 
 type Props = {
-	requestDataStream: any
+	requestDataStream: any,
+	setMotorsState: any
 };
 
 type State = {};
@@ -22,9 +24,18 @@ export class App extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
+	}
 
-        this.props.requestDataStream()
-    }    
+	componentDidMount() {
+		this.props.requestDataStream()
+		
+		document.body.addEventListener("keydown", (event) => {
+			
+			if (event.key === "Delete"){
+				this.props.setMotorsState(false);
+			}
+		})
+	}
 
     public render() {
 		return (
@@ -36,11 +47,8 @@ export class App extends React.Component<Props, State> {
 					<div className="orientation-settings">
 						<OrientationSettings></OrientationSettings>
 					</div>
-					<div className="orientation-readout">
-						<OrientationReadout></OrientationReadout>
-					</div>
-					<div className="motors-readout">
-						<MotorsReadout></MotorsReadout>
+					<div className="motor-controls">
+						<MotorControls></MotorControls>
 					</div>
 				</div>
 				<div>
@@ -48,14 +56,10 @@ export class App extends React.Component<Props, State> {
 						<Map></Map>
 						<div className="below-map">
 							<div>
-								<MotorControls></MotorControls>
-								{/* <Panel title="TEST 2"></Panel> */}
+								<OrientationReadout></OrientationReadout>
 							</div>
 							<div>
-								{/* 
-								<Panel title="TEST 3"></Panel>
-								<Panel title="TEST 4"></Panel> 
-								*/}
+								<MotorsReadout></MotorsReadout>
 							</div>
 						</div>
 					</div>
@@ -72,5 +76,5 @@ export default connect(
 		  
       }
     },
-    { requestDataStream },
+    { requestDataStream, setMotorsState },
   )(App)

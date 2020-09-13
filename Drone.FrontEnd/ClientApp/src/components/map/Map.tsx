@@ -29,7 +29,6 @@ export class Map extends React.Component<Props, State> {
     this.isReady = false;
     this.methodQueue = [];
 
-    this.props.requestPosition();
     // setInterval(() => this.props.requestPosition(), 250)
   }
 

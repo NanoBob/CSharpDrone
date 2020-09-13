@@ -22,10 +22,7 @@ export class OrientationReadout extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
-
-        this.props.requestOrientation()
-        // setInterval(() => this.props.requestOrientation(), 250);
-    }    
+    }
 
     public render() {
         return <Panel title="Orientation readout">

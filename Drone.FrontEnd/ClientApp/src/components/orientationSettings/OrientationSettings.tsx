@@ -60,7 +60,9 @@ export class OrientationSettings extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
+    }
 
+    componentDidMount() {
         this.props.requestAssistRate();
         this.props.requestOrientationHandler(Axis.Yaw);
         this.props.requestOrientationHandler(Axis.Pitch);

@@ -104,11 +104,20 @@ namespace Drone.Core.Controllers
         {
             this.Orientation = SanitizeOriention(this.orientationSensor.GetOrientation());
             OrientationChanged?.Invoke(new Orientation(this.Orientation));
-            if (IsAssistEnabled && (++assistCount % FramesPerAssist == 0))
+            if (IsAssistEnabled)
             {
-                Debug.WriteLine($"Orient: {Orientation}");
-                Debug.WriteLine($"Target: {Target}");
-                HandleOrientationOffset(this.Orientation - this.Target);
+                if ((++assistCount % FramesPerAssist == 0))
+                {
+                    Debug.WriteLine($"Orient: {Orientation}");
+                    Debug.WriteLine($"Target: {Target}");
+                    HandleOrientationOffset(this.Orientation - this.Target);
+                }
+            } else
+            {
+                this.motorController.Yaw = 0;
+                this.motorController.Pitch = 0;
+                this.motorController.Roll = 0;
+                this.motorController.UpdateMotors();
             }
         }
 
