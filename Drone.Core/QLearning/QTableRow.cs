@@ -15,6 +15,12 @@ namespace Drone.Core.QLearning
         public Dictionary<int, float> tableColumns;
         private readonly Random randomNumberGenerator;
 
+        public QTableRow()
+        {
+            this.defaultValueConstructor = (f) => 0;
+            this.tableColumns = new Dictionary<int, float>();
+            this.randomNumberGenerator = new Random();
+        }
 
         public QTableRow(float minThrottle, float maxThrottle, float throttleIncrement, Func<float, float> defaultValueConstructor)
         {

@@ -5,7 +5,19 @@ import { DroneSelectInput } from "../droneSelectInput/DroneSelectInput";
 import { OrientationHandler } from "./orientationHandler/OrientationHandler";
 import "./orientationSettings.scss";
 import { AppState } from "../../store";
-import { requestOrientation, setSensorState, setAssistState, requestSensorState, requestAssistState, requestOrientationHandler, setOrientationHandler, requestAssistRate, setAssistRate } from "../../store/orientation/actions";
+import { 
+    requestOrientation, 
+    setSensorState, 
+    setAssistState, 
+    requestSensorState, 
+    requestAssistState, 
+    requestOrientationHandler, 
+    setOrientationHandler, 
+    requestAssistRate, 
+    setAssistRate,
+    downloadOrientationHandlerConfiguration,
+    uploadOrientationHandlerConfiguration
+} from "../../store/orientation/actions";
 import { connect } from "react-redux";
 import { OrientationState } from "../../store/orientation/types";
 import { Axis } from "../../enums/Axis";
@@ -20,6 +32,8 @@ type Props = {
     setAssistState: any,
     setAssistRate: any,
     setOrientationHandler: any,
+    downloadOrientationHandlerConfiguration: any,
+    uploadOrientationHandlerConfiguration: any,
     orientationState: OrientationState
 };
 
@@ -39,6 +53,7 @@ export class OrientationSettings extends React.Component<Props, State> {
         // { label: "11Hz", value: 9 },
         { label: "10Hz", value: 10 },
         { label: "5Hz", value: 20 },
+        { label: "2Hz", value: 50 },
         { label: "1Hz", value: 100 },
     ]
 
@@ -68,14 +83,20 @@ export class OrientationSettings extends React.Component<Props, State> {
                     <OrientationHandler 
                         orientationHandler={this.props.orientationState.orientationHandlers[Axis.Yaw]}
                         updateOrientationHandler={(handler) => this.props.setOrientationHandler(handler)}
+                        requestDownload={() => this.props.downloadOrientationHandlerConfiguration(Axis.Yaw)}
+                        requestUpload={(content) => this.props.uploadOrientationHandlerConfiguration(Axis.Yaw, content)}
                     />
                     <OrientationHandler 
                         orientationHandler={this.props.orientationState.orientationHandlers[Axis.Pitch]}
                         updateOrientationHandler={(handler) => this.props.setOrientationHandler(handler)}
+                        requestDownload={() => this.props.downloadOrientationHandlerConfiguration(Axis.Pitch)}
+                        requestUpload={(content) => this.props.uploadOrientationHandlerConfiguration(Axis.Pitch, content)}
                     />
                     <OrientationHandler 
                         orientationHandler={this.props.orientationState.orientationHandlers[Axis.Roll]}
                         updateOrientationHandler={(handler) => this.props.setOrientationHandler(handler)}
+                        requestDownload={() => this.props.downloadOrientationHandlerConfiguration(Axis.Roll)}
+                        requestUpload={(content) => this.props.uploadOrientationHandlerConfiguration(Axis.Roll, content)}
                     />
                 </div>
             </div>
@@ -89,6 +110,18 @@ export default connect(
         orientationState: state.orientation
       }
     },
-    { requestOrientation, requestSensorState, requestAssistState, setSensorState, setAssistState, requestOrientationHandler, setOrientationHandler, requestAssistRate, setAssistRate },
+    { 
+        requestOrientation, 
+        requestSensorState, 
+        requestAssistState, 
+        setSensorState, 
+        setAssistState, 
+        requestOrientationHandler, 
+        setOrientationHandler, 
+        requestAssistRate, 
+        setAssistRate,
+        downloadOrientationHandlerConfiguration,
+        uploadOrientationHandlerConfiguration
+    },
   )(OrientationSettings)
   

@@ -16,6 +16,10 @@ namespace Drone.Core.QLearning
         private readonly float throttleIncrement;
         private Dictionary<int, QTableRow> tableRows;
 
+        public QTable() {
+            this.tableRows = new Dictionary<int, QTableRow>();
+        }
+
         public QTable(float minOffset, float maxOffset, float offsetIncrements, float minThrottle, float maxThrottle, float throttleIncrement)
         {
             this.minOffset = minOffset;

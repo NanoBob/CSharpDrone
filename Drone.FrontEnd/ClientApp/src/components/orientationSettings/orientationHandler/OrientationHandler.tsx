@@ -5,10 +5,13 @@ import { Axis } from "../../../enums/Axis";
 import { Toggle } from "../../toggle/Toggle";
 import { DroneInput } from "../../droneInput/DroneInput";
 import { DroneButton } from "../../droneButton/DroneButton";
+import { FileButton } from "../../fileButton/FileButton";
 
 type Props = {
     orientationHandler: OrientationHandlerState,
-    updateOrientationHandler: (handler: OrientationHandlerState) => void
+    updateOrientationHandler: (handler: OrientationHandlerState) => void,
+    requestDownload: () => void,
+    requestUpload: (content: string) => void,
 };
 
 type State = {
@@ -60,6 +63,14 @@ export class OrientationHandler extends React.Component<Props, State> {
 
     submit() {
         this.props.updateOrientationHandler(this.state.orientationHandler);
+    }
+
+    downloadHandlerConfiguration() {
+        this.props.requestDownload();
+    }
+
+    uploadHandlerConfiguration(fileContent: any) {
+        this.props.requestUpload(fileContent);
     }
 
     public render() {
@@ -117,7 +128,13 @@ export class OrientationHandler extends React.Component<Props, State> {
                             />
                         </div>
                     }
-                    <div className="orientation-handler-submit-wrapper">
+                    <div className="orientation-handler-button-wrapper">
+                        { this.state.orientationHandler.isQLearning ? 
+                            <>
+                                <FileButton label="⬆" onChange={(value) => this.uploadHandlerConfiguration(value)}/>
+                                <DroneButton label="⬇" onClick={() => this.downloadHandlerConfiguration()}/>
+                            </>
+                        : <></>}
                         <DroneButton label="Submit" onClick={() => this.submit()}/>
                     </div>
                 </div>

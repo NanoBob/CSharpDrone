@@ -189,3 +189,41 @@ export const setOrientationHandler = (orientationHandler: OrientationHandlerStat
       }
     };
 }
+
+export const downloadOrientationHandlerConfiguration = (axis: Axis) => {
+    return async (dispatch: any, getState: any) => {
+      try {
+        const url = `${config.baseUrl}/orientation/assist/handler/${Axis[axis]}/json`;
+        const result = await axios.get(url, {
+          headers: { Authorization: `Bearer ${getAuthenticationHash(config.authenticationKey)}` },
+        });
+  
+
+        const downloadUrl = window.URL.createObjectURL(new Blob([JSON.stringify(result.data)]));
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.setAttribute("download", `${Axis[axis]}.json`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (error) {
+        addHttpErrorNotification(error)(dispatch);
+      }
+    };
+}
+
+
+export const uploadOrientationHandlerConfiguration = (axis: Axis, json: string) => {
+  return async (dispatch: any, getState: any) => {
+    try {
+      const url = `${config.baseUrl}/orientation/assist/handler/${Axis[axis]}/json`;
+      const result = await axios.post(url, JSON.parse(json), {
+        headers: { Authorization: `Bearer ${getAuthenticationHash(config.authenticationKey)}` },
+      });
+      
+      addNotification(result.data.message)(dispatch);
+    } catch (error) {
+      addHttpErrorNotification(error)(dispatch);
+    }
+  };
+}

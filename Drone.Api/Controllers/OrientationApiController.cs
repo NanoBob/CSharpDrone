@@ -105,6 +105,25 @@ namespace Drone.Core.Controllers
 
             foreach (Axis axis in Enum.GetValues(typeof(Axis)))
             {
+                webserver.AddAction("GET", $"/orientation/assist/handler/{axis}", (context) =>
+                {
+                    var handler = drone.GetOffsetHandler(axis);
+
+                    var qLearningHandler = handler as QLearningOrientationOffsetHandler;
+                    var regularHandler = handler as OrientationOffsetHandler;
+
+                    return new OrientationAssistHandlerDto
+                    {
+                        axis = axis,
+                        agression = regularHandler?.Aggression,
+
+                        isQLearning = qLearningHandler != null,
+                        minThrottle = qLearningHandler?.MinThrottle,
+                        maxThrottle = qLearningHandler?.MaxThrottle ?? regularHandler.MaxThrottle,
+                        throttleIncrement = qLearningHandler?.ThrottleIncrement
+                    };
+                });
+
                 webserver.AddAction("POST", $"/orientation/assist/handler/{axis}", (context) =>
                 {
                     string input;
@@ -125,26 +144,56 @@ namespace Drone.Core.Controllers
                         message = "Orientation assist handler updated"
                     };
                 });
-            }
 
-            foreach (Axis axis in Enum.GetValues(typeof(Axis))) {
-                webserver.AddAction("GET", $"/orientation/assist/handler/{axis}", (context) =>
+                webserver.AddAction("GET", $"/orientation/assist/handler/{axis}/json", (context) =>
                 {
                     var handler = drone.GetOffsetHandler(axis);
 
                     var qLearningHandler = handler as QLearningOrientationOffsetHandler;
-                    var regularHandler = handler as OrientationOffsetHandler;
 
-                    return new OrientationAssistHandlerDto
+                    if (qLearningHandler == null)
                     {
-                        axis = axis,
-                        agression = regularHandler?.Aggression,
+                        context.Response.StatusCode = 400;
+                        return null;
+                    }
+                    else
+                    {
+                        var bytes = Encoding.UTF8.GetBytes(qLearningHandler.SaveToJson());
+                        context.Response.ContentType = "application/octet-stream";
+                        context.Response.ContentLength64 = bytes.Length;
+                        context.Response.OutputStream.Write(bytes);
+                        context.Response.StatusCode = 200;
+                        context.Response.Close();
+                        return null;
+                    }
+                });
 
-                        isQLearning = qLearningHandler != null,
-                        minThrottle = qLearningHandler?.MinThrottle,
-                        maxThrottle = qLearningHandler?.MaxThrottle ?? regularHandler.MaxThrottle,
-                        throttleIncrement = qLearningHandler?.ThrottleIncrement
-                    };
+                webserver.AddAction("POST", $"/orientation/assist/handler/{axis}/json", (context) =>
+                {
+                    string input;
+                    using (StreamReader reader = new StreamReader(context.Request.InputStream))
+                    {
+                        input = reader.ReadToEnd();
+                    }
+
+                    var handler = drone.GetOffsetHandler(axis);
+
+                    var qLearningHandler = handler as QLearningOrientationOffsetHandler;
+
+                    if (qLearningHandler == null)
+                    {
+                        context.Response.StatusCode = 400;
+                        return null;
+                    }
+                    else
+                    {
+                        qLearningHandler.LoadJson(input);
+
+                        return new
+                        {
+                            message = "Orientation handler configuration loaded"
+                        };
+                    }
                 });
             }
         }

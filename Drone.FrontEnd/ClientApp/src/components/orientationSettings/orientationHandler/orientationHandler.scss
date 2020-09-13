@@ -32,10 +32,14 @@
             }
         }
 
-        .orientation-handler-submit-wrapper {
+        .orientation-handler-button-wrapper {
             display: flex;
             justify-content: flex-end;
             margin-top: 5px;
+
+            > * {
+                margin-left: 5px;
+            }
         }
     }
 }
