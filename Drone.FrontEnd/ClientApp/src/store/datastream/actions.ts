@@ -7,6 +7,7 @@ import { NotificationType } from "../notifications/types";
 import { requestAssistRate, requestOrientationHandler } from "../orientation/actions";
 import { Axis } from "../../enums/Axis";
 import { MessageType, DroneFlags } from "./types"
+import { getAuthenticationHash } from "../../utilities/authenticationHash";
 
 
 let socket: WebSocket | null;
@@ -22,7 +23,7 @@ function openSocket() {
 }
 
 function handleSocketOpen() {
-  addNotification("Data stream connected", NotificationType.Success)(socketDispatch);
+  socket?.send(getAuthenticationHash(config.authenticationKey));
 
   requestAssistRate()(socketDispatch, null);
   requestOrientationHandler(Axis.Yaw)(socketDispatch, null);
@@ -53,6 +54,9 @@ async function handleSocketMessage(event: MessageEvent) {
        break;
     case MessageType.Flags:
       handleFlagsMessage(view);
+      break;
+    case MessageType.Authorization:
+      handleAuthorizationMessage(view);
       break;
   }
 }
@@ -112,6 +116,10 @@ function handleFlagsMessage(view: DataView) {
     type: SET_ASSIST,
     value: (value & DroneFlags.OrientationAssistEnabled) !== 0
   });
+}
+
+function handleAuthorizationMessage(view: DataView) {
+  addNotification("Data stream connected", NotificationType.Success)(socketDispatch);
 }
 
 export const requestDataStream = () => {

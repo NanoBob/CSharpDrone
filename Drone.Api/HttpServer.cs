@@ -42,13 +42,17 @@ namespace Drone.Core
                 {
                     var context = await listener.GetContextAsync();
 
-                    if (context.Request.IsWebSocketRequest)
+                    _ = Task.Run(async () =>
                     {
-                        await HandleWebSocketRequest(context);
-                    } else
-                    {
-                        HandleWebRequest(context);
-                    }
+                        if (context.Request.IsWebSocketRequest)
+                        {
+                            await HandleWebSocketRequest(context);
+                        }
+                        else
+                        {
+                            HandleWebRequest(context);
+                        }
+                    });
                 }
             });
         }
@@ -56,8 +60,37 @@ namespace Drone.Core
         private async Task HandleWebSocketRequest(HttpListenerContext context)
         {
             var socket = await context.AcceptWebSocketAsync("drone");
-            this.webSockets.Add(socket.WebSocket);
-            this.SocketConnected?.Invoke(socket.WebSocket);
+            if (this.authorizationHandler == null)
+            {
+                this.webSockets.Add(socket.WebSocket);
+                this.SocketConnected?.Invoke(socket.WebSocket);
+            }
+            else
+            {
+                byte[] buffer = new byte[128];
+                var task = socket.WebSocket.ReceiveAsync(buffer, new CancellationToken());
+
+                await Task.Delay(1000);
+                if (!task.IsCompleted)
+                {
+                    await socket.WebSocket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Authorization timeout", new CancellationToken());
+                    return;
+                }
+
+                var result = await task;
+                var bytes = buffer.Take(result.Count).ToArray();
+
+                string token = Encoding.ASCII.GetString(bytes);
+                if (this.authorizationHandler.IsValidToken(token))
+                {
+                    this.webSockets.Add(socket.WebSocket);
+                    this.SocketConnected?.Invoke(socket.WebSocket);
+                }
+                else
+                {
+                    await socket.WebSocket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Unauthorized", new CancellationToken());
+                }
+            }
         }
 
         private void HandleWebRequest(HttpListenerContext context)

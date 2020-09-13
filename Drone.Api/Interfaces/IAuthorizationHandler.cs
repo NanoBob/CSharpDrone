@@ -8,5 +8,6 @@ namespace Drone.Core.Interfaces
     public interface IAuthorizationHandler
     {
         bool IsAuthorized(HttpListenerContext context);
+        bool IsValidToken(string token);
     }
 }

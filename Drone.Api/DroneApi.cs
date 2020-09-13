@@ -51,12 +51,16 @@ namespace Drone.Core
 
         private async void HandleSocketConnect(WebSocket socket)
         {
-            await socket.SendAsync(WebSocketMessageFactory.CreateFlagsMessage(
-                 (drone.AreMotorsEnabled ? DroneFlags.MotorsEnabled : 0) |
-                 (drone.IsGpsEnabled ? DroneFlags.GpsEnabled : 0) |
-                 (drone.IsOrientationSensorEnabled ? DroneFlags.OrientationSensorEnabled : 0) |
-                 (drone.IsOrientationAssistEnabled ? DroneFlags.OrientationAssistEnabled : 0)
-            ), System.Net.WebSockets.WebSocketMessageType.Binary, true, new CancellationToken());
+            await Task.WhenAll(new Task[]
+            {
+                socket.SendAsync(WebSocketMessageFactory.CreateAuthorizedMessage(), System.Net.WebSockets.WebSocketMessageType.Binary, true, new CancellationToken()),
+                socket.SendAsync(WebSocketMessageFactory.CreateFlagsMessage(
+                     (drone.AreMotorsEnabled ? DroneFlags.MotorsEnabled : 0) |
+                     (drone.IsGpsEnabled ? DroneFlags.GpsEnabled : 0) |
+                     (drone.IsOrientationSensorEnabled ? DroneFlags.OrientationSensorEnabled : 0) |
+                     (drone.IsOrientationAssistEnabled ? DroneFlags.OrientationAssistEnabled : 0)
+                ), System.Net.WebSockets.WebSocketMessageType.Binary, true, new CancellationToken())
+            });
         }
 
         private void AddActions()

@@ -29,7 +29,11 @@ namespace Drone.Core.AuthorizationHandlers
             }
             string token = bearer.Replace("Bearer ", "");
 
+            return IsValidToken(token);
+        }
 
+        public bool IsValidToken(string token)
+        {
             DateTime roundedNow = RoundDateTime(DateTime.UtcNow, this.windowSize);
 
             if (IsValidToken(token, roundedNow))

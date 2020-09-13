@@ -3,6 +3,7 @@ export enum MessageType {
   Orientation,
   Position,
   Flags,
+  Authorization
 }
 
 export enum DroneFlags {

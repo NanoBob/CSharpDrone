@@ -13,7 +13,8 @@ namespace Drone.Api
         Throttles,
         Orientation,
         Position,
-        Flags
+        Flags,
+        Authorized,
     }
 
     public static class WebSocketMessageFactory
@@ -50,6 +51,11 @@ namespace Drone.Api
             return new byte[] { (byte)WebSocketMessageType.Flags }
                 .Concat(BitConverter.GetBytes((ushort)value))
                 .ToArray();
+        }
+
+        public static byte[] CreateAuthorizedMessage()
+        {
+            return new byte[] { (byte)WebSocketMessageType.Authorized };
         }
     }
 }
